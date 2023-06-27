@@ -10,47 +10,63 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using static UnityEngine.GraphicsBuffer;
 
 public class SetupMetadataState : IImportWindowState
 {
-    private static readonly string kAlbedoMapName = "albedo";
-    private static readonly string kNormalMapName = "normal";
+    private static readonly string k_albedoMapName = "albedo";
+    private static readonly string k_normalMapName = "normal";
 
-    private ImportConfig _mImportConfig;
+    private ImportConfig m_importConfig;
 
-    private ModelRef _mModelRef;
+    private ModelRef m_modelRef;
 
-    private Vector2 _mScrollPosition;
+    private Vector2 m_scrollPosition;
 
-    private ModelData _mParentModelData;
+    private ModelData m_parentModelData;
 
+    private MetadataTemplate m_activeTemplate;
+    
     public SetupMetadataState(ImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner)
     {
-        _mImportConfig = config;
+        m_importConfig = config;
         LoadModelAndExtractMaterial().Forget();
+
+
+        foreach (var template in TemplateImporter.Instance.Template.Templates)
+        {
+            if (template.Name == m_importConfig.TemplateName)
+            {
+                m_activeTemplate = template;
+                break;
+            }
+        }
+
+        if (m_activeTemplate == null)
+        {
+            Debug.LogError("template not found!");
+        }
     }
 
     public SetupMetadataState(ModelRef existingModelRef, EditorWindow window, StateMachine owner) : base(window, owner)
     {
-        _mModelRef = existingModelRef;
+        m_modelRef = existingModelRef;
 
-        string path = AssetDatabase.GetAssetPath(_mModelRef);
+        string path = AssetDatabase.GetAssetPath(m_modelRef);
         if(path == null)
             Debug.LogError("failed to find metadata file");
-        _mImportConfig = new ImportConfig();
-        _mImportConfig.AssetPath = Path.GetDirectoryName(path);
-        _mImportConfig.AssetName = Path.GetFileNameWithoutExtension(path);
-        Debug.Log("asset path: " + _mImportConfig.AssetPath);
-        Debug.Log("asset name: " + _mImportConfig.AssetName);
+        m_importConfig = new ImportConfig();
+        m_importConfig.AssetPath = Path.GetDirectoryName(path);
+        m_importConfig.AssetName = Path.GetFileNameWithoutExtension(path);
+        Debug.Log("asset path: " + m_importConfig.AssetPath);
+        Debug.Log("asset name: " + m_importConfig.AssetName);
     }
 
     public override void Update()
     {
-        if (_mModelRef == null)
+        if (m_modelRef == null)
             return;
 
-        _mScrollPosition = EditorGUILayout.BeginScrollView(_mScrollPosition);
+        m_scrollPosition = EditorGUILayout.BeginScrollView(m_scrollPosition);
 
         GUILayout.Space(20);
 
@@ -59,13 +75,13 @@ public class SetupMetadataState : IImportWindowState
         GUILayout.Space(20);
 
         //at top level
-        if (_mParentModelData == null)
+        if (m_parentModelData == null)
         {
-            ShowModelData(_mModelRef.Root);
+            ShowModelData(m_modelRef.Root);
         }
         else
         {
-            foreach (var mChild in _mParentModelData.SubModels)
+            foreach (var mChild in m_parentModelData.SubModels)
             {
                 ShowModelData(mChild);
                 GUILayout.Space(10);
@@ -100,33 +116,33 @@ public class SetupMetadataState : IImportWindowState
         modelData.Name = EditorGUILayout.TextField(modelData.Name, GUILayout.Width(300));
         GUILayout.EndHorizontal();
 
-        //description
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Description: ", EditorStylesHelper.LabelStyle);
-        modelData.Description = EditorGUILayout.TextField(modelData.Description, GUILayout.Width(300));
-        GUILayout.EndHorizontal();
+        ////description
+        //EditorGUILayout.BeginHorizontal();
+        //GUILayout.Space(20);
+        //EditorGUILayout.LabelField("Description: ", EditorStylesHelper.LabelStyle);
+        //modelData.Description = EditorGUILayout.TextField(modelData.Description, GUILayout.Width(300));
+        //GUILayout.EndHorizontal();
 
-        //URL
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("URL: ", EditorStylesHelper.LabelStyle);
-        modelData.Url = EditorGUILayout.TextField(modelData.Url, GUILayout.Width(300));
-        GUILayout.EndHorizontal();
+        ////URL
+        //EditorGUILayout.BeginHorizontal();
+        //GUILayout.Space(20);
+        //EditorGUILayout.LabelField("URL: ", EditorStylesHelper.LabelStyle);
+        //modelData.Url = EditorGUILayout.TextField(modelData.Url, GUILayout.Width(300));
+        //GUILayout.EndHorizontal();
 
-        //image
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Image: ", EditorStylesHelper.LabelStyle);
-        modelData.Image = (Image)EditorGUILayout.ObjectField(modelData.Image, typeof(Image), false, GUILayout.Width(300));
-        GUILayout.EndHorizontal();
+        ////image
+        //EditorGUILayout.BeginHorizontal();
+        //GUILayout.Space(20);
+        //EditorGUILayout.LabelField("Image: ", EditorStylesHelper.LabelStyle);
+        //modelData.Image = (Image)EditorGUILayout.ObjectField(modelData.Image, typeof(Image), false, GUILayout.Width(300));
+        //GUILayout.EndHorizontal();
 
-        //video clip
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Video: ", EditorStylesHelper.LabelStyle);
-        modelData.Video = (VideoClip)EditorGUILayout.ObjectField(modelData.Video, typeof(VideoClip), false, GUILayout.Width(300));
-        GUILayout.EndHorizontal();
+        ////video clip
+        //EditorGUILayout.BeginHorizontal();
+        //GUILayout.Space(20);
+        //EditorGUILayout.LabelField("Video: ", EditorStylesHelper.LabelStyle);
+        //modelData.Video = (VideoClip)EditorGUILayout.ObjectField(modelData.Video, typeof(VideoClip), false, GUILayout.Width(300));
+        //GUILayout.EndHorizontal();
 
 
         //sub model button
@@ -138,7 +154,7 @@ public class SetupMetadataState : IImportWindowState
         if (GUILayout.Button("Go", EditorStylesHelper.RegularButtonStyle, GUILayout.Width(40)))
         {
             CreateModelDataForEachSubModel(modelData.Transform, modelData);
-            _mParentModelData = modelData;
+            m_parentModelData = modelData;
             EditorWindow.Repaint();
         }
         GUILayout.EndHorizontal();
@@ -153,25 +169,25 @@ public class SetupMetadataState : IImportWindowState
         await UniTask.DelayFrame(1);
 
         // Import the copied asset
-        string absDstPath = _mImportConfig.AssetPath;
+        string absDstPath = m_importConfig.AssetPath;
         string relDstPath = absDstPath.Replace(Application.dataPath, "Assets");
-        string relModelPath = EditorUtilities.CombinePaths(relDstPath, _mImportConfig.AssetName) + ".FBX";
+        string relModelPath = EditorUtilities.CombinePaths(relDstPath, m_importConfig.AssetName) + ".FBX";
         AssetDatabase.ImportAsset(
             relModelPath,
             ImportAssetOptions.ForceUpdate);
 
-        if (_mImportConfig.AlbedoMapPath != null && File.Exists(_mImportConfig.AlbedoMapPath))
+        if (m_importConfig.AlbedoMapPath != null && File.Exists(m_importConfig.AlbedoMapPath))
         {
-            string relAlbedoPath = EditorUtilities.CombinePaths(relDstPath, kAlbedoMapName) + "." + _mImportConfig.AlbedoMapPath.Split('.').Last();
+            string relAlbedoPath = EditorUtilities.CombinePaths(relDstPath, k_albedoMapName) + "." + m_importConfig.AlbedoMapPath.Split('.').Last();
             Debug.Log(relAlbedoPath);
             AssetDatabase.ImportAsset(
                 relAlbedoPath,
                 ImportAssetOptions.ForceUpdate);
         }
 
-        if (_mImportConfig.NormalMapPath != null && File.Exists(_mImportConfig.NormalMapPath))
+        if (m_importConfig.NormalMapPath != null && File.Exists(m_importConfig.NormalMapPath))
         {
-            string relNormalPath = EditorUtilities.CombinePaths(relDstPath, kNormalMapName) + "." + _mImportConfig.NormalMapPath.Split('.').Last();
+            string relNormalPath = EditorUtilities.CombinePaths(relDstPath, k_normalMapName) + "." + m_importConfig.NormalMapPath.Split('.').Last();
             Debug.Log(relNormalPath);
             AssetDatabase.ImportAsset(
                 relNormalPath,
@@ -192,36 +208,37 @@ public class SetupMetadataState : IImportWindowState
 
         //load model
         var model = AssetDatabase.LoadAssetAtPath<GameObject>(relModelPath);
+        var modelInstance = GameObject.Instantiate(model);
 
         //create model ref
-        _mModelRef = ScriptableObject.CreateInstance<ModelRef>();
-        _mModelRef.Root = new ModelData();
-        _mModelRef.Root.Transform = model.transform;
-        _mModelRef.Model = model;
+        m_modelRef = ScriptableObject.CreateInstance<ModelRef>();
+        m_modelRef.Root = new ModelData();
+        m_modelRef.Root.Transform = model.transform;
+        m_modelRef.Model = modelInstance;
     }
 
 
     private void CopyAllResources()
     {
         File.Copy(
-            _mImportConfig.ResourcePath,
-            EditorUtilities.CombinePaths(_mImportConfig.AssetPath, _mImportConfig.AssetName) + ".FBX",
+            m_importConfig.ResourcePath,
+            EditorUtilities.CombinePaths(m_importConfig.AssetPath, m_importConfig.AssetName) + ".FBX",
             true);
 
-        if (_mImportConfig.AlbedoMapPath != null && File.Exists(_mImportConfig.AlbedoMapPath))
+        if (m_importConfig.AlbedoMapPath != null && File.Exists(m_importConfig.AlbedoMapPath))
         {
-            string albedoPath = EditorUtilities.CombinePaths(_mImportConfig.AssetPath, kAlbedoMapName) + "." + _mImportConfig.AlbedoMapPath.Split('.').Last();
+            string albedoPath = EditorUtilities.CombinePaths(m_importConfig.AssetPath, k_albedoMapName) + "." + m_importConfig.AlbedoMapPath.Split('.').Last();
             File.Copy(
-                _mImportConfig.AlbedoMapPath,
+                m_importConfig.AlbedoMapPath,
                 albedoPath,
                 true);
         }
 
-        if (_mImportConfig.NormalMapPath != null && File.Exists(_mImportConfig.NormalMapPath))
+        if (m_importConfig.NormalMapPath != null && File.Exists(m_importConfig.NormalMapPath))
         {
-            string normalPath = EditorUtilities.CombinePaths(_mImportConfig.AssetPath, kNormalMapName) + "." + _mImportConfig.NormalMapPath.Split('.').Last();
+            string normalPath = EditorUtilities.CombinePaths(m_importConfig.AssetPath, k_normalMapName) + "." + m_importConfig.NormalMapPath.Split('.').Last();
             File.Copy(
-                _mImportConfig.NormalMapPath,
+                m_importConfig.NormalMapPath,
                 normalPath,
                 true);
         }
@@ -236,6 +253,7 @@ public class SetupMetadataState : IImportWindowState
         {
             Transform tChild = tParent.GetChild(i);
             var mChild = new ModelData();
+            mChild.Index = i;
             mChild.Transform = tChild;
             mParent.SubModels.Add(mChild);
             mChild.Parent = mParent; 
@@ -244,14 +262,14 @@ public class SetupMetadataState : IImportWindowState
 
     private void OnBackButtonClicked()
     {
-        if (_mParentModelData == null)
+        if (m_parentModelData == null) 
         {
             SelectModelState state = new SelectModelState(EditorWindow, Owner);
             ChangeState(state);
         }
         else
         {
-            _mParentModelData = _mParentModelData.Parent;
+            m_parentModelData = m_parentModelData.Parent;
             EditorWindow.Repaint();
         }
     }
@@ -259,21 +277,34 @@ public class SetupMetadataState : IImportWindowState
 
     private void OnSaveButtonClicked()
     {
-        CalculateSizeAndCenter(_mModelRef.Root);
+        CalculateSizeAndCenter(m_modelRef.Root);
 
-        string absDstPath = EditorUtilities.CombinePaths(_mImportConfig.AssetPath, _mImportConfig.AssetName) + ".asset";
+        string absDstPath = EditorUtilities.CombinePaths(m_importConfig.AssetPath, m_importConfig.AssetName) + ".asset";
         string relDstPath = absDstPath.Replace(Application.dataPath, "Assets");
+        m_modelRef.Root.MetadataList.Add(new ImageFieldData());
+
         // If asset already exists at the path, delete it
         if (AssetDatabase.LoadAssetAtPath(relDstPath, typeof(ModelRef)) != null)
         {
-            EditorUtility.SetDirty(_mModelRef);
+            EditorUtility.SetDirty(m_modelRef);
             AssetDatabase.SaveAssets();
         }
         else
         {
-            AssetDatabase.CreateAsset(_mModelRef, relDstPath);
+            AssetDatabase.CreateAsset(m_modelRef, relDstPath);
             AssetDatabase.SaveAssets();
         }
+
+        // save prefab
+        // Add your component
+        MetadataInspector inspector = m_modelRef.Model.AddComponent<MetadataInspector>();
+        inspector.ModelRef = m_modelRef;
+
+        // Save the modified prefab
+        PrefabUtility.SaveAsPrefabAsset(m_modelRef.Model, "Assets/model.prefab");
+
+        // destory model instance
+        GameObject.DestroyImmediate(m_modelRef.Model);
     }
 
     private void CalculateSizeAndCenter(ModelData modelData)

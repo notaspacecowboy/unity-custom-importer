@@ -8,8 +8,10 @@ public class SubModelHighlighter : MonoBehaviour
 {
     private Renderer _mRenderer;
     private bool _mIsHighlighted = false;
+    private bool _mIsSelected = false;
 
     public bool IsHighlighted => _mIsHighlighted;
+    public bool IsSelected => _mIsSelected;
 
     void Awake()
     {
@@ -20,7 +22,7 @@ public class SubModelHighlighter : MonoBehaviour
     {
         _mIsHighlighted = true;
         foreach (Renderer r in gameObject.GetComponentsInChildren<Renderer>())
-            r.material.color = Color.red;
+            r.material.color = new Color(1f, 0.6f, 0.6f, 0.8f);
     }
 
     public void UnHighlight()
@@ -28,5 +30,18 @@ public class SubModelHighlighter : MonoBehaviour
         _mIsHighlighted = false;
         foreach (Renderer r in gameObject.GetComponentsInChildren<Renderer>())
             r.material.color = Color.white;
+    }
+
+    public void Selected()
+    {
+        _mIsSelected = true;
+        foreach (Renderer r in gameObject.GetComponentsInChildren<Renderer>())
+            r.material.color = Color.white;
+    }
+    public void UnSelected()
+    {
+        _mIsSelected = false;
+        foreach (Renderer r in gameObject.GetComponentsInChildren<Renderer>())
+            r.material.color = new Color(0.6f, 0.6f, 0.6f, 0.8f);
     }
 }

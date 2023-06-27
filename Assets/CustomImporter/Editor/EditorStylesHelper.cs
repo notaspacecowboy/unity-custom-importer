@@ -26,10 +26,8 @@ public static class EditorStylesHelper
         get
         {
             GUIStyle style = new GUIStyle(GUI.skin.label);
-            style.fontSize = 24;
+            style.fontSize = 20;
             style.fontStyle = FontStyle.Bold;
-            style.alignment = TextAnchor.MiddleCenter;
-            style.normal.textColor = LightBlue;
             return style;
         }
     }

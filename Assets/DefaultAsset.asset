@@ -12,14 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 362f85443f5205d468a4f3f7cff4b01d, type: 3}
   m_Name: DefaultAsset
   m_EditorClassIdentifier: 
-  _mModel: {fileID: 919132149155446097, guid: c8011b444dd82204b9eadaa8723ee272, type: 3}
+  _mModel: {fileID: 0}
   _mRoot:
-    _mTransform: {fileID: -8679921383154817045, guid: c8011b444dd82204b9eadaa8723ee272, type: 3}
-    _mName: DefaultAsset
-    _mDescription: 123
-    _mUrl: 
-    _mImage: {fileID: 0}
-    _mVideo: {fileID: 0}
-    _mSize: {x: 58.442833, y: 11.8139715, z: 50.62037}
-    _mCenter: {x: 20.200144, y: -0.7251954, z: -0.0000019073486}
-    _mSubModels: []
+    m_name: DefaultAsset
+    m_index: 0
+    m_transform: {fileID: -8679921383154817045, guid: cc8ea23ad1fac7847b9cee1151941011, type: 3}
+    m_size: {x: 6.4903216, y: 5.378486, z: 5.48637}
+    m_center: {x: -2.1162808, y: 2.689243, z: -2.743185}
+    m_subModels: []
+    m_metadataList:
+    - rid: 4007758980429119488
+  references:
+    version: 2
+    RefIds:
+    - rid: 4007758980429119488
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: 
+        FieldValue: {fileID: 0}

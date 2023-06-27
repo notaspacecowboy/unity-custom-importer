@@ -16,7 +16,7 @@ public class CustomImporterWindow : EditorWindow
     private StateMachine _mStateMachine;
 
 
-    [MenuItem("Window/Custom Importer")]
+    [MenuItem("Custom Importer/Importer Window")]
     public static void ShowWindow()
     {
         GetWindow<CustomImporterWindow>("Custom Importer");

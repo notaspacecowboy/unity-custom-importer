@@ -5,116 +5,127 @@ using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using Object = UnityEngine.Object;
+
+
+[Serializable]
+public class FieldData
+{
+    public string FieldName;
+}
+
+[System.Serializable]
+public class StringFieldData : FieldData
+{
+    [SerializeField]
+    public string FieldValue;
+}
+
+[System.Serializable]
+public class ImageFieldData : FieldData
+{
+    [SerializeField]
+    public Texture2D FieldValue;
+}
+
+[System.Serializable]
+public class VideoFieldData : FieldData
+{
+    [SerializeField]
+    public VideoClip FieldValue;
+}
 
 
 [Serializable]
 public class ModelData
 {
     [SerializeField]
-    private Transform _mTransform;
+    private string m_name;
 
     [SerializeField]
-    private string _mName;
+    private int m_index;
 
     [SerializeField]
-    private string _mDescription;
+    private Transform m_transform;
 
     [SerializeField]
-    private string _mUrl;
+    private ModelData m_parent;
 
     [SerializeField]
-    private Image _mImage;
+    private Vector3 m_size;
 
     [SerializeField]
-    private VideoClip _mVideo;
+    private Vector3 m_center;
 
     [SerializeField]
-    private ModelData _mParent;
+    private List<ModelData> m_subModels;
 
-    [SerializeField]
-    private Vector3 _mSize;
+    //actual metadata
+    [SerializeReference]
+    private List<FieldData> m_metadataList;
 
-    [SerializeField]
-    private Vector3 _mCenter;
-
-    [SerializeField]
-    private List<ModelData> _mSubModels;
-
-    public Transform Transform
+    public int Index
     {
-        get => _mTransform;
-        set => _mTransform = value;
+        get => m_index;
+        set => m_index = value;
     }
 
     public string Name
     {
         get
         {
-            if (_mName == "")
+            if (m_name == "")
                 return Transform.name;
-            return _mName;
+            return m_name;
         }
-        set => _mName = value;
+        set => m_name = value;
     }
 
-    public string Description
+    public Transform Transform
     {
-        get => _mDescription;
-        set => _mDescription = value;
-    }
-
-    public string Url
-    {
-        get => _mUrl;
-        set => _mUrl = value;
-    }
-
-    public Image Image
-    {
-        get => _mImage;
-        set => _mImage = value;
-    }
-
-    public VideoClip Video
-    {
-        get => _mVideo;
-        set => _mVideo = value;
+        get => m_transform;
+        set => m_transform = value;
     }
 
     public ModelData Parent
     {
-        get => _mParent;
-        set => _mParent = value;
+        get => m_parent;
+        set => m_parent = value;
     }
 
     public Vector3 Size
     {
-        get => _mSize;
-        set => _mSize = value;
+        get => m_size;
+        set => m_size = value;
     }
 
     public Vector3 Center
     {
-        get => _mCenter;
-        set => _mCenter = value;
+        get => m_center;
+        set => m_center = value;
     }
 
     public List<ModelData> SubModels
     {
-        get => _mSubModels;
-        set => _mSubModels = value;
+        get => m_subModels;
+        set => m_subModels = value;
+    }
+    public List<FieldData> MetadataList
+    {
+        get => m_metadataList;
+        set => m_metadataList = value;
     }
 
     public ModelData()
     {
-        _mName = "";
-        _mDescription = "";
-        _mUrl = null;
-        _mSubModels = new List<ModelData>();
+        m_name = "";
+        m_subModels = new List<ModelData>();
+        m_metadataList = new List<FieldData>();
     }
 }
 
 
+[Serializable]
 public class ModelRef : ScriptableObject
 {
     [SerializeField]

@@ -6,30 +6,31 @@ using UnityEngine;
 
 public class SelectModelState : IImportWindowState
 {
-    private ModelRef _existingProfile = null;
-
-    public SelectModelState(EditorWindow window, StateMachine owner) : base(window, owner)
+    public SelectModelState(EditorWindow window, StateMachine owner) : base(window, owner, 450, 250, 300)
     {
     }
 
     public override void Update()
     {
-        GUILayout.Space(20);
+        base.Update();
 
-        GUILayout.Label("Custom Model Importer", EditorStylesHelper.TitleStyle);
+        GUILayout.Space(20);
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
-        var style = EditorStylesHelper.LabelStyle;
-        style.normal.textColor = EditorStylesHelper.LightBlue;
-        EditorGUILayout.LabelField("Import a new FBX model or choose from existing profile: ", style, GUILayout.Width(400));
+        GUILayout.Label("Custom Model Importer", EditorStylesHelper.TitleStyle);
+        GUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField("Import a new FBX model or choose from existing profile: ", EditorStylesHelper.LabelStyle, GUILayout.Width(400));
         GUILayout.EndHorizontal();
         GUILayout.Space(20);
 
         //file picker
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
-        EditorGUILayout.LabelField("Open File Browser: ", EditorStylesHelper.LabelStyle, GUILayout.Width(300));
+        EditorGUILayout.LabelField("Open File Browser: ", EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
         if (GUILayout.Button("...", GUILayout.Width(110)))
             OnFilePickerButtonClicked();
         GUILayout.EndHorizontal();
@@ -37,16 +38,16 @@ public class SelectModelState : IImportWindowState
         //pick an existing profile
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
-        EditorGUILayout.LabelField("Continue with an existing profile: ", EditorStylesHelper.LabelStyle, GUILayout.Width(300));
-        _existingProfile = (ModelRef)EditorGUILayout.ObjectField("", _existingProfile, typeof(ModelRef), false, GUILayout.Width(110));
-        if (_existingProfile != null)
+        EditorGUILayout.LabelField("Continue with an existing profile: ", EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+        m_existingProfile = (ModelRef)EditorGUILayout.ObjectField("", m_existingProfile, typeof(ModelRef), false, GUILayout.Width(110));
+        if (m_existingProfile != null)
         {
             OnImportExistingProfile();
         }
         GUILayout.EndHorizontal();
 
         GUILayout.Space(30);
-        EditorWindow.minSize = EditorWindow.maxSize = new Vector2(450, 250);
+        EditorWindow.minSize = new Vector2(450, 250);
     }
 
     private void OnFilePickerButtonClicked()
@@ -66,7 +67,7 @@ public class SelectModelState : IImportWindowState
 
     private void OnImportExistingProfile()
     {
-        var state = new SetupMetadataState(_existingProfile, EditorWindow, Owner);
+        var state = new SetupMetadataState(m_existingProfile, EditorWindow, Owner);
         ChangeState(state);
     }
 }
