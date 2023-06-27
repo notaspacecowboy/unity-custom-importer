@@ -2,16 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using Object = UnityEngine.Object;
 
 
 [Serializable]
 public class FieldData
 {
     public string FieldName;
+
+    public virtual void OnGUI(GUIStyle style, params GUILayoutOption[] options) {}
 }
 
 [System.Serializable]
@@ -19,6 +21,17 @@ public class StringFieldData : FieldData
 {
     [SerializeField]
     public string FieldValue;
+
+    public override void OnGUI(GUIStyle style, params GUILayoutOption[] options)
+    {
+        base.OnGUI(style, options);
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField($"{FieldName}: ", style);
+        FieldValue = EditorGUILayout.TextField(FieldValue, options);
+        GUILayout.EndHorizontal();
+    }
 }
 
 [System.Serializable]
@@ -26,6 +39,17 @@ public class ImageFieldData : FieldData
 {
     [SerializeField]
     public Texture2D FieldValue;
+
+    public override void OnGUI(GUIStyle style, params GUILayoutOption[] options)
+    {
+        base.OnGUI(style, options);
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField($"{FieldName}: ", style);
+        FieldValue = (Texture2D)EditorGUILayout.ObjectField(FieldValue, typeof(Texture2D), false, options);
+        GUILayout.EndHorizontal();
+    }
 }
 
 [System.Serializable]
@@ -33,6 +57,17 @@ public class VideoFieldData : FieldData
 {
     [SerializeField]
     public VideoClip FieldValue;
+
+    public override void OnGUI(GUIStyle style, params GUILayoutOption[] options)
+    {
+        base.OnGUI(style, options);
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField($"{FieldName}: ", style);
+        FieldValue = (VideoClip)EditorGUILayout.ObjectField(FieldValue, typeof(VideoClip), false, options);
+        GUILayout.EndHorizontal();
+    }
 }
 
 

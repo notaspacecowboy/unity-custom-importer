@@ -26,11 +26,9 @@ public class SetupMetadataState : IImportWindowState
 
     private MetadataTemplate m_activeTemplate;
     
-    public SetupMetadataState(ImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner)
+    public SetupMetadataState(ImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
     {
         m_importConfig = config;
-        LoadModelAndExtractMaterial().Forget();
-
 
         foreach (var template in TemplateImporter.Instance.Template.Templates)
         {
@@ -44,10 +42,13 @@ public class SetupMetadataState : IImportWindowState
         if (m_activeTemplate == null)
         {
             Debug.LogError("template not found!");
+            return;
         }
+
+        LoadModelAndExtractMaterial().Forget();
     }
 
-    public SetupMetadataState(ModelRef existingModelRef, EditorWindow window, StateMachine owner) : base(window, owner)
+    public SetupMetadataState(ModelRef existingModelRef, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
     {
         m_modelRef = existingModelRef;
 
@@ -65,6 +66,8 @@ public class SetupMetadataState : IImportWindowState
     {
         if (m_modelRef == null)
             return;
+
+        base.Update();
 
         m_scrollPosition = EditorGUILayout.BeginScrollView(m_scrollPosition);
 
@@ -92,11 +95,9 @@ public class SetupMetadataState : IImportWindowState
 
         //back button
         GUILayout.Space(20);
-        EditorStylesHelper.HorizontalCenteredButton(OnBackButtonClicked, "Back", EditorStylesHelper.WarnButtonStyle, GUILayout.Height(30), GUILayout.Width(400));
-        EditorStylesHelper.HorizontalCenteredButton(OnSaveButtonClicked, "Save", EditorStylesHelper.RegularButtonStyle, GUILayout.Height(30), GUILayout.Width(400));
+        EditorStylesHelper.HorizontalCenteredButton(OnBackButtonClicked, "Back", EditorStylesHelper.WarnButtonStyle, GUILayout.Height(30), GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace + 100));
+        EditorStylesHelper.HorizontalCenteredButton(OnSaveButtonClicked, "Save", EditorStylesHelper.RegularButtonStyle, GUILayout.Height(30), GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace + 100));
         GUILayout.Space(40);
-
-        EditorWindow.minSize = EditorWindow.maxSize = new Vector2(600, 600);
     }
 
     private void ShowModelData(ModelData modelData)
@@ -113,36 +114,13 @@ public class SetupMetadataState : IImportWindowState
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
         EditorGUILayout.LabelField("Name: ", EditorStylesHelper.LabelStyle);
-        modelData.Name = EditorGUILayout.TextField(modelData.Name, GUILayout.Width(300));
+        modelData.Name = EditorGUILayout.TextField(modelData.Name, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
         GUILayout.EndHorizontal();
-
-        ////description
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Space(20);
-        //EditorGUILayout.LabelField("Description: ", EditorStylesHelper.LabelStyle);
-        //modelData.Description = EditorGUILayout.TextField(modelData.Description, GUILayout.Width(300));
-        //GUILayout.EndHorizontal();
-
-        ////URL
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Space(20);
-        //EditorGUILayout.LabelField("URL: ", EditorStylesHelper.LabelStyle);
-        //modelData.Url = EditorGUILayout.TextField(modelData.Url, GUILayout.Width(300));
-        //GUILayout.EndHorizontal();
-
-        ////image
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Space(20);
-        //EditorGUILayout.LabelField("Image: ", EditorStylesHelper.LabelStyle);
-        //modelData.Image = (Image)EditorGUILayout.ObjectField(modelData.Image, typeof(Image), false, GUILayout.Width(300));
-        //GUILayout.EndHorizontal();
-
-        ////video clip
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Space(20);
-        //EditorGUILayout.LabelField("Video: ", EditorStylesHelper.LabelStyle);
-        //modelData.Video = (VideoClip)EditorGUILayout.ObjectField(modelData.Video, typeof(VideoClip), false, GUILayout.Width(300));
-        //GUILayout.EndHorizontal();
+        
+        //show metadata fields
+        foreach (var field in modelData.MetadataList)
+            field.OnGUI(EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+        
 
 
         //sub model button
@@ -160,7 +138,7 @@ public class SetupMetadataState : IImportWindowState
         GUILayout.EndHorizontal();
     }
 
-#region import model and create material
+    #region import model and create material
     private async UniTask LoadModelAndExtractMaterial()
     {
         //copy all resources from resource path to unity project
@@ -215,6 +193,8 @@ public class SetupMetadataState : IImportWindowState
         m_modelRef.Root = new ModelData();
         m_modelRef.Root.Transform = model.transform;
         m_modelRef.Model = modelInstance;
+
+        AttachFieldToModel(m_modelRef.Root);
     }
 
 
@@ -243,9 +223,6 @@ public class SetupMetadataState : IImportWindowState
                 true);
         }
     }
-    
-
-#endregion
 
     private void CreateModelDataForEachSubModel(Transform tParent, ModelData mParent)
     {
@@ -256,13 +233,60 @@ public class SetupMetadataState : IImportWindowState
             mChild.Index = i;
             mChild.Transform = tChild;
             mParent.SubModels.Add(mChild);
-            mChild.Parent = mParent; 
+            mChild.Parent = mParent;
+            AttachFieldToModel(mChild);
         }
     }
 
+    private void CalculateSizeAndCenter(ModelData modelData)
+    {
+        DoCalculateSizeAndCenter(modelData.Transform.gameObject, modelData);
+        foreach (var mChild in modelData.SubModels)
+            CalculateSizeAndCenter(mChild);
+    }
+
+    private void DoCalculateSizeAndCenter(GameObject obj, ModelData modelData)
+    {
+        Bounds bounds = new Bounds(obj.transform.position, Vector3.zero);
+        foreach (Renderer r in obj.GetComponentsInChildren<Renderer>())
+            bounds.Encapsulate(r.bounds);
+
+        modelData.Size = bounds.size;
+        modelData.Center = bounds.center;
+    }
+
+    private void AttachFieldToModel(ModelData model)
+    {
+        foreach (var field in m_activeTemplate.Fields)
+        {
+            switch (field.Type)
+            {
+                case FieldType.String:
+                    model.MetadataList.Add(new StringFieldData() { FieldName = field.Name });
+                    break;
+
+                case FieldType.Image:
+                    model.MetadataList.Add(new ImageFieldData() { FieldName = field.Name });
+                    break;
+
+                case FieldType.VideoClip:
+                    model.MetadataList.Add(new VideoFieldData() { FieldName = field.Name });
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    #endregion
+
+    #region button callbacks
+
     private void OnBackButtonClicked()
     {
-        if (m_parentModelData == null) 
+        if (m_parentModelData == null)
         {
             SelectModelState state = new SelectModelState(EditorWindow, Owner);
             ChangeState(state);
@@ -282,6 +306,7 @@ public class SetupMetadataState : IImportWindowState
         string absDstPath = EditorUtilities.CombinePaths(m_importConfig.AssetPath, m_importConfig.AssetName) + ".asset";
         string relDstPath = absDstPath.Replace(Application.dataPath, "Assets");
         m_modelRef.Root.MetadataList.Add(new ImageFieldData());
+        m_modelRef.Root.MetadataList.Add(new VideoFieldData());
 
         // If asset already exists at the path, delete it
         if (AssetDatabase.LoadAssetAtPath(relDstPath, typeof(ModelRef)) != null)
@@ -307,20 +332,6 @@ public class SetupMetadataState : IImportWindowState
         GameObject.DestroyImmediate(m_modelRef.Model);
     }
 
-    private void CalculateSizeAndCenter(ModelData modelData)
-    {
-        DoCalculateSizeAndCenter(modelData.Transform.gameObject, modelData);
-        foreach (var mChild in modelData.SubModels)
-            CalculateSizeAndCenter(mChild);
-    }
+    #endregion
 
-    private void DoCalculateSizeAndCenter(GameObject obj, ModelData modelData)
-    {
-        Bounds bounds = new Bounds(obj.transform.position, Vector3.zero);
-        foreach (Renderer r in obj.GetComponentsInChildren<Renderer>())
-            bounds.Encapsulate(r.bounds);
-
-        modelData.Size = bounds.size;
-        modelData.Center = bounds.center;
-    }
 }

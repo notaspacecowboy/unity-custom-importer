@@ -61,11 +61,24 @@ public abstract class IImportWindowState
 
     public virtual void Update()
     {
+        //unity pls
+        bool rePaint = false;
+        rePaint |= m_currentWidth != EditorWindow.position.width;
+        rePaint |= m_currentHeight != EditorWindow.position.height;
+
         m_currentWidth = EditorWindow.position.width;
         m_currentHeight = EditorWindow.position.height;
-        m_extraHorSpace = m_currentWidth - MinWidth;
+        var extraHorSpace = m_currentWidth - MinWidth;
+        rePaint |= m_extraHorSpace != extraHorSpace;
+        m_extraHorSpace = extraHorSpace;
 
         EditorWindow.minSize = new Vector2(m_minWidth, m_minHeight);
+
+        if(rePaint)
+            EditorWindow.Repaint();
+
+        //i do not want to do this but unity is so dumb
+        //EditorWindow.Repaint();
     }
 
     public void ChangeState(IImportWindowState state)
