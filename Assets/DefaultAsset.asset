@@ -1,0 +1,789 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 362f85443f5205d468a4f3f7cff4b01d, type: 3}
+  m_Name: DefaultAsset
+  m_EditorClassIdentifier: 
+  m_go: {fileID: 0}
+  m_root:
+    m_name: DefaultAsset
+    m_index: 0
+    m_subModels:
+    - m_name: Bell_conjectural1
+      m_index: 0
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517016
+      - rid: 8566302831288517017
+      - rid: 8566302831288517018
+    - m_name: Butress1
+      m_index: 1
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517019
+      - rid: 8566302831288517020
+      - rid: 8566302831288517021
+    - m_name: Butress2
+      m_index: 2
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517022
+      - rid: 8566302831288517023
+      - rid: 8566302831288517024
+    - m_name: Butress3
+      m_index: 3
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517025
+      - rid: 8566302831288517026
+      - rid: 8566302831288517027
+    - m_name: Butress4
+      m_index: 4
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517028
+      - rid: 8566302831288517029
+      - rid: 8566302831288517030
+    - m_name: Butress5
+      m_index: 5
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517031
+      - rid: 8566302831288517032
+      - rid: 8566302831288517033
+    - m_name: Butress6
+      m_index: 6
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517034
+      - rid: 8566302831288517035
+      - rid: 8566302831288517036
+    - m_name: Butress7
+      m_index: 7
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517037
+      - rid: 8566302831288517038
+      - rid: 8566302831288517039
+    - m_name: Butress8
+      m_index: 8
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517040
+      - rid: 8566302831288517041
+      - rid: 8566302831288517042
+    - m_name: East_wall1
+      m_index: 10
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517043
+      - rid: 8566302831288517044
+      - rid: 8566302831288517045
+    - m_name: East_Window1
+      m_index: 11
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517046
+      - rid: 8566302831288517047
+      - rid: 8566302831288517048
+    - m_name: East_windowFrame1
+      m_index: 12
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517049
+      - rid: 8566302831288517050
+      - rid: 8566302831288517051
+    - m_name: EastSlate1
+      m_index: 13
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517052
+      - rid: 8566302831288517053
+      - rid: 8566302831288517054
+    - m_name: Foundation1
+      m_index: 14
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517055
+      - rid: 8566302831288517056
+      - rid: 8566302831288517057
+    - m_name: Group1
+      m_index: 15
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517058
+      - rid: 8566302831288517059
+      - rid: 8566302831288517060
+    - m_name: Group5
+      m_index: 16
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517061
+      - rid: 8566302831288517062
+      - rid: 8566302831288517063
+    - m_name: Group6
+      m_index: 17
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517064
+      - rid: 8566302831288517065
+      - rid: 8566302831288517066
+    - m_name: Group7
+      m_index: 18
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517067
+      - rid: 8566302831288517068
+      - rid: 8566302831288517069
+    - m_name: Group8
+      m_index: 19
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517070
+      - rid: 8566302831288517071
+      - rid: 8566302831288517072
+    - m_name: North_Wall1
+      m_index: 20
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517073
+      - rid: 8566302831288517074
+      - rid: 8566302831288517075
+    - m_name: North_window1
+      m_index: 21
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517076
+      - rid: 8566302831288517077
+      - rid: 8566302831288517078
+    - m_name: North_window2
+      m_index: 22
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517079
+      - rid: 8566302831288517080
+      - rid: 8566302831288517081
+    - m_name: PrincipleBeam1
+      m_index: 23
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517082
+      - rid: 8566302831288517083
+      - rid: 8566302831288517084
+    - m_name: PrincipleBeam2
+      m_index: 24
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517085
+      - rid: 8566302831288517086
+      - rid: 8566302831288517087
+    - m_name: Slate_roof1
+      m_index: 25
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517088
+      - rid: 8566302831288517089
+      - rid: 8566302831288517090
+    - m_name: South_Wall1
+      m_index: 26
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517091
+      - rid: 8566302831288517092
+      - rid: 8566302831288517093
+    - m_name: South_window1
+      m_index: 27
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517094
+      - rid: 8566302831288517095
+      - rid: 8566302831288517096
+    - m_name: Stone_Step1
+      m_index: 28
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517097
+      - rid: 8566302831288517098
+      - rid: 8566302831288517099
+    - m_name: Tile_floor1
+      m_index: 29
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517100
+      - rid: 8566302831288517101
+      - rid: 8566302831288517102
+    - m_name: WallPlate1
+      m_index: 30
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517103
+      - rid: 8566302831288517104
+      - rid: 8566302831288517105
+    - m_name: WallPlate2
+      m_index: 31
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517106
+      - rid: 8566302831288517107
+      - rid: 8566302831288517108
+    - m_name: West_Wall
+      m_index: 32
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517109
+      - rid: 8566302831288517110
+      - rid: 8566302831288517111
+    - m_name: West_Window1
+      m_index: 33
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517112
+      - rid: 8566302831288517113
+      - rid: 8566302831288517114
+    - m_name: West_windowframe1
+      m_index: 34
+      m_subModels: []
+      m_metadataList:
+      - rid: 8566302831288517115
+      - rid: 8566302831288517116
+      - rid: 8566302831288517117
+    m_metadataList:
+    - rid: 8566302831288517118
+    - rid: 8566302831288517119
+    - rid: 8566302831288517120
+  references:
+    version: 2
+    RefIds:
+    - rid: 8566302831288517016
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517017
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517018
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517019
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517020
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517021
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517022
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517023
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517024
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517025
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517026
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517027
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517028
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517029
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517030
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517031
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517032
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517033
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517034
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517035
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517036
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517037
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517038
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517039
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517040
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517041
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517042
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517043
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517044
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517045
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517046
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517047
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517048
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517049
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517050
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517051
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517052
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517053
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517054
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517055
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517056
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517057
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517058
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517059
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517060
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517061
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517062
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517063
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517064
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517065
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517066
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517067
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517068
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517069
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517070
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517071
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517072
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517073
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517074
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517075
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517076
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517077
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517078
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517079
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517080
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517081
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517082
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517083
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517084
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517085
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517086
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517087
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517088
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517089
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517090
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517091
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517092
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517093
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517094
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517095
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517096
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517097
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517098
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517099
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517100
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517101
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517102
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517103
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517104
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517105
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517106
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517107
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517108
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517109
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517110
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517111
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517112
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517113
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517114
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517115
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517116
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517117
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517118
+      type: {class: StringFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Description
+        FieldValue: 
+    - rid: 8566302831288517119
+      type: {class: VideoFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Video
+        FieldValue: {fileID: 0}
+    - rid: 8566302831288517120
+      type: {class: ImageFieldData, ns: , asm: Assembly-CSharp}
+      data:
+        FieldName: Image
+        FieldValue: {fileID: 0}
