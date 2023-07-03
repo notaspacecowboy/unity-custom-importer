@@ -28,7 +28,7 @@ public class ImportConfig
     public string EmissionMapPath { get; set; }
     public string DetailMaskPath { get; set; }
     public string SpecularMapPath { get; set; }
-
+    public bool ParadataOnly { get; set; }
 
     public void Reset()
     {
@@ -37,6 +37,7 @@ public class ImportConfig
         AssetName = KDefaultAssetName;
         Validated = false;
         ErrorMessage = "";
+        ParadataOnly = false;
     }
 }
 

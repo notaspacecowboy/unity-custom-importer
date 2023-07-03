@@ -45,9 +45,11 @@ public class TemplateImporter: Singleton<TemplateImporter>
             }
         }
 
-        Dictionary<string, FieldType> fields = new Dictionary<string, FieldType>();
+        //create a new template
+        MetadataTemplate newTemplate = new MetadataTemplate();
+        newTemplate.Name = templateName;
 
-        // Read the file line by line
+        // Read the file line by line to find all fields
         foreach (string line in File.ReadLines(csvFilePath).Skip(1))
         {
             var row = line.Split(',');
@@ -58,26 +60,16 @@ public class TemplateImporter: Singleton<TemplateImporter>
                 Debug.LogError("field type not recognizable");
                 return;
             }
-            else if (fields.ContainsKey(fieldName))
+            else if (newTemplate.Fields.Exists(field => field.Name == fieldName))
             {
                 Debug.LogError("field name already exists");
                 return;
             }
+            bool isParaData = (row[2] == "yes" ? true : false);
 
-            fields.Add(fieldName, fieldType);
+            newTemplate.Fields.Add(new Field() { Name = fieldName, Type = fieldType, IsParaData = isParaData });
         }
 
-        GenerateMetadataTemplate(templateName, fields);
-    }
-
-    private void GenerateMetadataTemplate(string templateName, Dictionary<string, FieldType> fields)
-    {
-        MetadataTemplate template = new MetadataTemplate();
-        template.Name = templateName;
-        template.Fields = new List<Field>();
-        foreach (var field in fields)
-            template.Fields.Add(new Field() { Name = field.Key, Type = field.Value });
-
-        m_metadataTemplates.Templates.Add(template);
+        m_metadataTemplates.Templates.Add(newTemplate);
     }
 }

@@ -19,6 +19,8 @@ public class Field
     public string Name;
     [SerializeField]
     public FieldType Type;
+    [SerializeField]
+    public bool IsParaData;
 }
 
 
@@ -30,6 +32,10 @@ public class MetadataTemplate
 
     [SerializeField]
     public List<Field> Fields;
+
+    public MetadataTemplate() {
+        Fields = new List<Field>();
+    }
 }
 
 

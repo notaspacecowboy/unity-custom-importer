@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class SelectModelState : IImportWindowState
 {
+    private ModelRef m_existingProfile;
+    private ModelRef m_existingProfileParOnly;
+
     public SelectModelState(EditorWindow window, StateMachine owner) : base(window, owner, 450, 250, 300)
     {
     }
@@ -42,7 +45,18 @@ public class SelectModelState : IImportWindowState
         m_existingProfile = (ModelRef)EditorGUILayout.ObjectField("", m_existingProfile, typeof(ModelRef), false, GUILayout.Width(110));
         if (m_existingProfile != null)
         {
-            OnImportExistingProfile();
+            OnImportExistingProfile(m_existingProfile, false);
+        }
+        GUILayout.EndHorizontal();
+
+        //pick an existing profile and only allows user to modify paradata
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField("Continue with an existing profile (paradata only): ", EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+        m_existingProfileParOnly = (ModelRef)EditorGUILayout.ObjectField("", m_existingProfileParOnly, typeof(ModelRef), false, GUILayout.Width(110));
+        if (m_existingProfileParOnly != null)
+        {
+            OnImportExistingProfile(m_existingProfileParOnly, true);
         }
         GUILayout.EndHorizontal();
 
@@ -65,9 +79,9 @@ public class SelectModelState : IImportWindowState
         ChangeState(state);
     }
 
-    private void OnImportExistingProfile()
+    private void OnImportExistingProfile(ModelRef model, bool paradataOnly)
     {
-        var state = new SetupMetadataState(m_existingProfile, EditorWindow, Owner);
+        var state = new SetupMetadataState(model, paradataOnly, EditorWindow, Owner);
         ChangeState(state);
     }
 }

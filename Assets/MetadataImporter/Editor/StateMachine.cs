@@ -10,7 +10,6 @@ public abstract class IImportWindowState
     private StateMachine m_owner;
     
     protected float m_minHorizontalSpace;
-    protected ModelRef m_existingProfile;
     protected float m_currentWidth;
     protected float m_currentHeight;
     protected float m_extraHorSpace;
@@ -85,6 +84,10 @@ public abstract class IImportWindowState
     {
         m_owner.ChangeState(state);
     }
+
+    public virtual void OnEnter() {}
+
+    public virtual void OnLeave() {}
 }
 
 public class StateMachine
@@ -97,6 +100,13 @@ public class StateMachine
     }
     public void ChangeState(IImportWindowState state)
     {
+        _mCurrentState?.OnLeave();
         _mCurrentState = state;
+        _mCurrentState.OnEnter();
+    }
+
+    public void Clear()
+    {
+        _mCurrentState.OnLeave();
     }
 }

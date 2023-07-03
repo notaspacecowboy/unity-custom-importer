@@ -54,6 +54,7 @@ public class MetadataComponent : MonoBehaviour
     {
         rootData.Transform = root;
         rootData.Collider = rootData.Transform.GetComponent<BoxCollider>();
+        rootData.Highlighter = rootData.Transform.GetComponent<SubModelHighlighter>();
         for (int i = 0; i < rootData.SubModels.Count; i++)
             FixModelDataReference(rootData.SubModels[i], transform.GetChild(rootData.SubModels[i].Index));
     }
@@ -90,7 +91,11 @@ public class MetadataComponent : MonoBehaviour
         }
 
         foreach (var model in m_currentRoot.SubModels)
+        {
             EnableCollider(model);
+            if(model.Highlighter == null)
+                Debug.LogError("highlighter is null!");
+        }
     }
 
 

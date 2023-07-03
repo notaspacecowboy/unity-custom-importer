@@ -13,6 +13,8 @@ using UnityEngine.Video;
 
 public class SetupMetadataState : IImportWindowState
 {
+    #region fields
+
     private static readonly string k_albedoMapName = "albedo";
     private static readonly string k_normalMapName = "normal";
 
@@ -25,7 +27,11 @@ public class SetupMetadataState : IImportWindowState
     private ModelData m_parentModelData;
 
     private MetadataTemplate m_activeTemplate;
-    
+
+    #endregion
+
+    #region lifecycle methods
+
     public SetupMetadataState(ImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
     {
         m_importConfig = config;
@@ -48,19 +54,41 @@ public class SetupMetadataState : IImportWindowState
         LoadModelAndExtractMaterial().Forget();
     }
 
-    public SetupMetadataState(ModelRef existingModelRef, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
+    public SetupMetadataState(ModelRef existingModelRef, bool paradataOnly, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
     {
-        m_modelRef = existingModelRef;
-
-        string path = AssetDatabase.GetAssetPath(m_modelRef);
-        if(path == null)
+        string path = AssetDatabase.GetAssetPath(existingModelRef);
+        if (path == null)
             Debug.LogError("failed to find metadata file");
         m_importConfig = new ImportConfig();
         m_importConfig.AssetPath = Path.GetDirectoryName(path);
         m_importConfig.AssetName = Path.GetFileNameWithoutExtension(path);
-        Debug.Log("asset path: " + m_importConfig.AssetPath);
-        Debug.Log("asset name: " + m_importConfig.AssetName);
+        m_importConfig.TemplateName = existingModelRef.TemplateName;
+        m_importConfig.ParadataOnly = paradataOnly;
+
+        foreach (var template in TemplateImporter.Instance.Template.Templates)
+        {
+            if (template.Name == m_importConfig.TemplateName)
+            {
+                m_activeTemplate = template;
+                break;
+            }
+        }
+
+        LoadExistingModel(existingModelRef).Forget();
     }
+
+    public override void OnLeave()
+    {
+        Debug.Log("on leave");
+
+        base.OnLeave();
+        if (m_modelRef != null && m_modelRef.GameObject != null)
+            GameObject.DestroyImmediate(m_modelRef.GameObject);
+    }
+
+    #endregion
+
+    #region GUI
 
     public override void Update()
     {
@@ -111,16 +139,23 @@ public class SetupMetadataState : IImportWindowState
         GUILayout.Space(10);
 
         //name
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Name: ", EditorStylesHelper.LabelStyle);
-        modelData.Name = EditorGUILayout.TextField(modelData.Name, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
-        GUILayout.EndHorizontal();
-        
+        if (!m_importConfig.ParadataOnly)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            EditorGUILayout.LabelField("Name: ", EditorStylesHelper.LabelStyle);
+            modelData.Name = EditorGUILayout.TextField(modelData.Name, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+            GUILayout.EndHorizontal();
+        }
+
         //show metadata fields
         foreach (var field in modelData.MetadataList)
+        {
+            if (!field.IsParaData && m_importConfig.ParadataOnly)
+                continue;
             field.OnGUI(EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
-        
+        }
+
 
 
         //sub model button
@@ -138,7 +173,34 @@ public class SetupMetadataState : IImportWindowState
         GUILayout.EndHorizontal();
     }
 
+    #endregion
+
     #region import model and create material
+
+    private async UniTask LoadExistingModel(ModelRef existingModelRef)
+    {
+        string absDstPath = m_importConfig.AssetPath;
+        string relDstPath = absDstPath.Replace(Application.dataPath, "Assets");
+        string relModelPath = EditorUtilities.CombinePaths(relDstPath, m_importConfig.AssetName) + ".FBX";
+
+        var model = AssetDatabase.LoadAssetAtPath<GameObject>(relModelPath);
+        var modelInstance = GameObject.Instantiate(model);
+        existingModelRef.GameObject = modelInstance;
+
+        await UniTask.DelayFrame(1);
+        FixModelReference(modelInstance.transform, existingModelRef.Root);
+        await UniTask.DelayFrame(1);
+
+        m_modelRef = existingModelRef;
+    }
+
+    private void FixModelReference(Transform transform, ModelData model)
+    {
+        model.Transform = transform;
+        foreach (var subModel in model.SubModels)
+            FixModelReference(transform.GetChild(subModel.Index), subModel);
+    }
+
     private async UniTask LoadModelAndExtractMaterial()
     {
         //copy all resources from resource path to unity project
@@ -193,6 +255,7 @@ public class SetupMetadataState : IImportWindowState
         m_modelRef.Root = new ModelData();
         m_modelRef.Root.Transform = model.transform;
         m_modelRef.GameObject = modelInstance;
+        m_modelRef.TemplateName = m_importConfig.TemplateName;
 
         AttachFieldToModel(m_modelRef.Root);
     }
@@ -248,15 +311,15 @@ public class SetupMetadataState : IImportWindowState
             switch (field.Type)
             {
                 case FieldType.String:
-                    model.MetadataList.Add(new StringFieldData() { FieldName = field.Name });
+                    model.MetadataList.Add(new StringFieldData() { FieldName = field.Name, IsParaData = field.IsParaData});
                     break;
 
                 case FieldType.Image:
-                    model.MetadataList.Add(new ImageFieldData() { FieldName = field.Name });
+                    model.MetadataList.Add(new ImageFieldData() { FieldName = field.Name, IsParaData = field.IsParaData });
                     break;
 
                 case FieldType.VideoClip:
-                    model.MetadataList.Add(new VideoFieldData() { FieldName = field.Name });
+                    model.MetadataList.Add(new VideoFieldData() { FieldName = field.Name, IsParaData = field.IsParaData });
                     break;
 
                 default:
@@ -343,9 +406,8 @@ public class SetupMetadataState : IImportWindowState
         PrefabUtility.SaveAsPrefabAsset(m_modelRef.GameObject, prefabPath);
 
         // destory model instance
-        GameObject.DestroyImmediate(m_modelRef.GameObject);
+        //GameObject.DestroyImmediate(m_modelRef.GameObject);
     }
 
     #endregion
-
 }

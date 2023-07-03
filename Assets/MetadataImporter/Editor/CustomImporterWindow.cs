@@ -13,13 +13,13 @@ using UnityEditor.VersionControl;
 
 public class CustomImporterWindow : EditorWindow
 {
-    private StateMachine _mStateMachine;
+    private StateMachine m_stateMachine;
 
 
-    [MenuItem("Custom Importer/Importer Window")]
+    [MenuItem("Metadata Importer/Importer Window")]
     public static void ShowWindow()
     {
-        GetWindow<CustomImporterWindow>("Custom Importer");
+        GetWindow<CustomImporterWindow>("Metadata Importer");
     }
 
 
@@ -27,13 +27,18 @@ public class CustomImporterWindow : EditorWindow
     {
         GUI.backgroundColor = EditorStylesHelper.BackGroundColor;
 
-        _mStateMachine = new StateMachine();
-        SelectModelState state = new SelectModelState(this, _mStateMachine);
-        _mStateMachine.ChangeState(state);
+        m_stateMachine = new StateMachine();
+        SelectModelState state = new SelectModelState(this, m_stateMachine);
+        m_stateMachine.ChangeState(state);
     }
 
     void OnGUI()
     {
-        _mStateMachine.Update();
+        m_stateMachine.Update();
+    }
+
+    void OnDestroy()
+    {
+        m_stateMachine.Clear();
     }
 }

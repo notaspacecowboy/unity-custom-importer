@@ -23,14 +23,11 @@ public class MetadataInspector : MonoSingleton<MetadataInspector>
         m_components.Clear(); 
     }
 
-
-
     #region lifecycle APIs
 
     private void Awake()
     {
         m_components = new List<MetadataComponent>();
-        m_selected = null;
     }
 
     private void Update()

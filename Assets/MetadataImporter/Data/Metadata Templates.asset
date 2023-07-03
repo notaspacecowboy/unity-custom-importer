@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: Metadata Templates
   m_EditorClassIdentifier: 
   Templates:
-  - Name: template_1
+  - Name: NortheyeChapel
     Fields:
     - Name: Description
       Type: 0
+      IsParaData: 0
     - Name: Video
       Type: 2
+      IsParaData: 1
     - Name: Image
       Type: 1
+      IsParaData: 1

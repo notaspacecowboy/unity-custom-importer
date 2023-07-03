@@ -10,7 +10,11 @@ using UnityEditor;
 [Serializable]
 public class FieldData
 {
+    [SerializeField]
     public string FieldName;
+
+    [SerializeField]
+    public bool IsParaData;
 
 #if UNITY_EDITOR
     public virtual void OnGUI(GUIStyle style, params GUILayoutOption[] options) {}
@@ -30,7 +34,7 @@ public class StringFieldData : FieldData
         
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
-        EditorGUILayout.LabelField($"{FieldName}: ", style);
+        EditorGUILayout.LabelField($"{FieldName}{(IsParaData ? "*" : "")}: ", style);
         FieldValue = EditorGUILayout.TextField(FieldValue, options);
         GUILayout.EndHorizontal();
     }
@@ -51,7 +55,7 @@ public class ImageFieldData : FieldData
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
-        EditorGUILayout.LabelField($"{FieldName}: ", style);
+        EditorGUILayout.LabelField($"{FieldName}{(IsParaData ? "*" : "")}: ", style);
         FieldValue = (Texture2D)EditorGUILayout.ObjectField(FieldValue, typeof(Texture2D), false, options);
         GUILayout.EndHorizontal();
     }
@@ -71,7 +75,7 @@ public class VideoFieldData : FieldData
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20);
-        EditorGUILayout.LabelField($"{FieldName}: ", style);
+        EditorGUILayout.LabelField($"{FieldName}{(IsParaData ? "*" : "")}: ", style);
         FieldValue = (VideoClip)EditorGUILayout.ObjectField(FieldValue, typeof(VideoClip), false, options);
         GUILayout.EndHorizontal();
     }
@@ -97,6 +101,9 @@ public class ModelData
     //actual metadata
     [SerializeReference]
     private List<FieldData> m_metadataList;
+
+    [SerializeReference] 
+    private Material m_highlightMaterial;
 
     public int Index
     {
@@ -132,9 +139,18 @@ public class ModelData
         set => m_metadataList = value;
     }
 
+    public Material HighlightMaterial
+    {
+        get => m_highlightMaterial;
+        set => m_highlightMaterial = value;
+    }
+
     public Transform Transform { get; set; }
 
     public BoxCollider Collider { get; set; }
+
+    public SubModelHighlighter Highlighter { get; set; }
+
 
     public ModelData()
     {
@@ -154,6 +170,9 @@ public class ModelRef : ScriptableObject
     [SerializeField]
     private ModelData m_root;
 
+    [SerializeField]
+    private string m_templateName;
+
     public GameObject GameObject
     {
         get => m_go;
@@ -163,5 +182,11 @@ public class ModelRef : ScriptableObject
     {
         get => m_root;
         set => m_root = value;
+    }
+
+    public string TemplateName
+    {
+        get => m_templateName;
+        set => m_templateName = value;
     }
 }
