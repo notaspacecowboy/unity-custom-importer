@@ -1,14 +1,45 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using TMPro;using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 #if UNITY_EDITOR
+using System.IO;
 using UnityEditor;
 #endif
 
+
+
+public interface IJsonObject
+{
+    public JObject ToJson();
+}
+
+public interface IFieldVisualizer
+{
+}
+
+public interface IStringFieldVisualizer: IFieldVisualizer
+{
+    TextMeshProUGUI StringField { get; }
+}
+
+public interface IImageFieldVisualizer : IFieldVisualizer
+{
+    Image ImageField { get; }
+}
+
+public interface IVideoFieldVisualizer : IFieldVisualizer
+{
+    VideoPlayer VideoField { get; }
+}
+
 [Serializable]
-public class FieldData
+public class FieldData: IJsonObject
 {
     [SerializeField]
     public string FieldName;
@@ -19,6 +50,13 @@ public class FieldData
 #if UNITY_EDITOR
     public virtual void OnGUI(GUIStyle style, params GUILayoutOption[] options) {}
 #endif
+
+    public virtual void ShowField(IFieldVisualizer visualizer) {}
+
+    public virtual JObject ToJson()
+    {
+        return new JObject();
+    }
 }
 
 [System.Serializable]
@@ -38,8 +76,27 @@ public class StringFieldData : FieldData
         FieldValue = EditorGUILayout.TextField(FieldValue, options);
         GUILayout.EndHorizontal();
     }
-
 #endif
+
+    public override JObject ToJson()
+    {
+        return new JObject
+        {
+            ["FieldName"] = FieldName,
+            ["FieldValue"] = FieldValue ?? "",
+            ["IsParaData"] = IsParaData
+        };
+    }
+
+
+    public override void ShowField(IFieldVisualizer visualizer)
+    {
+        if (visualizer is IStringFieldVisualizer stringFieldVisualizer && FieldValue != null)
+        {
+            stringFieldVisualizer.StringField.text = FieldValue;
+            stringFieldVisualizer.StringField.gameObject.SetActive(true);
+        }
+    }
 }
 
 [System.Serializable]
@@ -60,6 +117,26 @@ public class ImageFieldData : FieldData
         GUILayout.EndHorizontal();
     }
 #endif
+
+    public override void ShowField(IFieldVisualizer visualizer)
+    {
+        if (visualizer is IImageFieldVisualizer imageFieldVisualizer && FieldValue != null)
+        {
+            imageFieldVisualizer.ImageField.sprite = Sprite.Create(FieldValue, new Rect(0, 0, FieldValue.width, FieldValue.height), Vector2.zero);
+            imageFieldVisualizer.ImageField.SetNativeSize();
+            imageFieldVisualizer.ImageField.gameObject.SetActive(true);
+        }
+    }
+
+    public override JObject ToJson()
+    {
+        return new JObject
+        {
+            ["FieldName"] = FieldName,
+            ["FieldValue"] = (FieldValue == null ? "" : FieldValue.name),
+            ["IsParaData"] = IsParaData
+        };
+    }
 }
 
 [System.Serializable]
@@ -80,11 +157,30 @@ public class VideoFieldData : FieldData
         GUILayout.EndHorizontal();
     }
 #endif
+
+    public override void ShowField(IFieldVisualizer visualizer)
+    {
+        if (visualizer is IVideoFieldVisualizer videoFieldVisualizer && FieldValue != null)
+        {
+            videoFieldVisualizer.VideoField.clip = FieldValue;
+            videoFieldVisualizer.VideoField.gameObject.SetActive(true);
+        }
+    }
+
+    public override JObject ToJson()
+    {
+        return new JObject
+        {
+            ["FieldName"] = FieldName,
+            ["FieldValue"] = (FieldValue == null ? "" : FieldValue.name),
+            ["IsParaData"] = IsParaData
+        };
+    }
 }
 
 
 [Serializable]
-public class ModelData
+public class ModelData: IJsonObject
 {
     [SerializeField]
     private string m_name;
@@ -149,8 +245,6 @@ public class ModelData
 
     public BoxCollider Collider { get; set; }
 
-    public SubModelHighlighter Highlighter { get; set; }
-
 
     public ModelData()
     {
@@ -158,11 +252,24 @@ public class ModelData
         m_subModels = new List<ModelData>();
         m_metadataList = new List<FieldData>();
     }
+
+    public JObject ToJson()
+    {
+        JObject jObject = new JObject
+        {
+            ["Name"] = Name,
+            ["Index"] = Index,
+            ["SubModels"] = new JArray(SubModels.Select(subModel => subModel.ToJson())),
+            ["MetadataList"] = new JArray(MetadataList.Select(metadata => metadata.ToJson())),
+            ["HighlightMaterial"] = (HighlightMaterial == null ? "" : HighlightMaterial.name)
+        };
+        return jObject;
+    }
 }
 
 
 [Serializable]
-public class ModelRef : ScriptableObject
+public class ModelRef : ScriptableObject, IJsonObject
 {
     [SerializeField]
     private GameObject m_go;
@@ -189,4 +296,40 @@ public class ModelRef : ScriptableObject
         get => m_templateName;
         set => m_templateName = value;
     }
+
+    public JObject ToJson()
+    {
+        JObject jObject = new JObject
+        {
+            ["Root"] = Root.ToJson()
+        };
+        return jObject;
+    }
 }
+
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(ModelRef))]
+public class ModelRefEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector(); // Draws the default inspector
+
+        ModelRef modelRef = (ModelRef)target;
+
+        GUILayout.Space(10);
+        if (GUILayout.Button("Export Metadata"))
+        {
+            string exportPath = EditorUtility.OpenFolderPanel("Choose Export Path", ".", "");
+            ExportToPath(modelRef, exportPath);
+        }
+    }
+
+    public void ExportToPath(ModelRef modelRef, string exportPath)
+    {
+        string json = modelRef.ToJson().ToString();
+        File.WriteAllText(exportPath + "/metadata.json", json);
+    }
+}
+#endif

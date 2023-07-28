@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,8 +6,12 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
+[Serializable]
 public class SubModelHighlighter : MonoBehaviour
 {
+    public ModelData ModelData { get; set; }
+
+
     private List<Renderer> m_renderers;
     private bool m_isSelected;
 

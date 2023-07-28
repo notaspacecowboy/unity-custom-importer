@@ -13,12 +13,21 @@ using UnityEngine.Video;
 
 public class SetupMetadataState : IImportWindowState
 {
+    private enum ImportType
+    {
+        ImportModel,
+        AttachToSceneGameObject,
+        ContinueWithExistingMetaData,
+        ContinueWithExistingParadata
+    }
+
+
     #region fields
 
     private static readonly string k_albedoMapName = "albedo";
     private static readonly string k_normalMapName = "normal";
 
-    private ImportConfig m_importConfig;
+    private EditorImportConfig m_importConfig;
 
     private ModelRef m_modelRef;
 
@@ -28,12 +37,16 @@ public class SetupMetadataState : IImportWindowState
 
     private MetadataTemplate m_activeTemplate;
 
+    private ImportType m_importType = ImportType.ImportModel;
+
     #endregion
 
     #region lifecycle methods
 
-    public SetupMetadataState(ImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
+    public SetupMetadataState(EditorImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
     {
+        m_importType = ImportType.ImportModel;
+
         m_importConfig = config;
 
         foreach (var template in TemplateImporter.Instance.Template.Templates)
@@ -54,12 +67,45 @@ public class SetupMetadataState : IImportWindowState
         LoadModelAndExtractMaterial().Forget();
     }
 
+    public SetupMetadataState(GameObject selectedSceneGameObject, EditorImportConfig config, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
+    {
+        m_importType = ImportType.AttachToSceneGameObject;
+
+        m_importConfig = config;
+
+        foreach (var template in TemplateImporter.Instance.Template.Templates)
+        {
+            if (template.Name == m_importConfig.TemplateName)
+            {
+                m_activeTemplate = template;
+                break;
+            }
+        }
+
+        if (m_activeTemplate == null)
+        {
+            Debug.LogError("template not found!");
+            return;
+        }
+
+        //create model ref
+        m_modelRef = ScriptableObject.CreateInstance<ModelRef>();
+        m_modelRef.Root = new ModelData();
+        m_modelRef.Root.Transform = selectedSceneGameObject.transform;
+        m_modelRef.GameObject = selectedSceneGameObject;
+        m_modelRef.TemplateName = m_importConfig.TemplateName;
+
+        AttachFieldToModel(m_modelRef.Root);
+    }
+
     public SetupMetadataState(ModelRef existingModelRef, bool paradataOnly, EditorWindow window, StateMachine owner) : base(window, owner, 600, 600, 300)
     {
+        m_importType = paradataOnly ? ImportType.ContinueWithExistingParadata : ImportType.ContinueWithExistingMetaData;
+
         string path = AssetDatabase.GetAssetPath(existingModelRef);
         if (path == null)
             Debug.LogError("failed to find metadata file");
-        m_importConfig = new ImportConfig();
+        m_importConfig = new EditorImportConfig();
         m_importConfig.AssetPath = Path.GetDirectoryName(path);
         m_importConfig.AssetName = Path.GetFileNameWithoutExtension(path);
         m_importConfig.TemplateName = existingModelRef.TemplateName;
@@ -82,6 +128,8 @@ public class SetupMetadataState : IImportWindowState
         Debug.Log("on leave");
 
         base.OnLeave();
+
+
         if (m_modelRef != null && m_modelRef.GameObject != null)
             GameObject.DestroyImmediate(m_modelRef.GameObject);
     }
@@ -166,8 +214,7 @@ public class SetupMetadataState : IImportWindowState
         EditorGUILayout.LabelField("Go to its sub-models? ", EditorStylesHelper.LabelStyle);
         if (GUILayout.Button("Go", EditorStylesHelper.RegularButtonStyle, GUILayout.Width(40)))
         {
-            CreateModelDataForEachSubModel(modelData.Transform, modelData);
-            m_parentModelData = modelData;
+            OnGoButtonClicked(modelData);
             EditorWindow.Repaint();
         }
         GUILayout.EndHorizontal();
@@ -181,7 +228,7 @@ public class SetupMetadataState : IImportWindowState
     {
         string absDstPath = m_importConfig.AssetPath;
         string relDstPath = absDstPath.Replace(Application.dataPath, "Assets");
-        string relModelPath = EditorUtilities.CombinePaths(relDstPath, m_importConfig.AssetName) + ".FBX";
+        string relModelPath = EditorUtilities.CombinePaths(relDstPath, "prefab_" + m_importConfig.AssetName) + ".prefab";
 
         var model = AssetDatabase.LoadAssetAtPath<GameObject>(relModelPath);
         var modelInstance = GameObject.Instantiate(model);
@@ -289,6 +336,9 @@ public class SetupMetadataState : IImportWindowState
 
     private void CreateModelDataForEachSubModel(Transform tParent, ModelData mParent)
     {
+        if (mParent.SubModels.Count != 0)
+            return;
+
         for (int i = 0; i < tParent.childCount; i++)
         {
             Transform tChild = tParent.GetChild(i);
@@ -340,6 +390,16 @@ public class SetupMetadataState : IImportWindowState
         foreach (var model in rootModel.SubModels)
             AddColliders(rootTransform.GetChild(model.Index), model);
 
+        // Store the original transform properties
+        Vector3 originalPosition = rootTransform.position;
+        Quaternion originalRotation = rootTransform.rotation;
+        Vector3 originalScale = rootTransform.localScale;
+
+        // Temporarily negate position, rotation, and scale
+        rootTransform.position = Vector3.zero;
+        rootTransform.rotation = Quaternion.identity;
+        rootTransform.localScale = Vector3.one;
+
         List<Bounds> objectsBounds = rootTransform.GetComponentsInChildren<Renderer>().Select(r => r.bounds).ToList();
 
         float minX = objectsBounds.Min(bound => bound.min.x);
@@ -354,13 +414,30 @@ public class SetupMetadataState : IImportWindowState
         collider.center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
         collider.size = new Vector3(maxX - minX, maxY - minY, maxZ - minZ);
 
+        if (m_importType == ImportType.AttachToSceneGameObject)
+        {
+            collider.center -= rootTransform.position;
+            
+        }
+
         collider.enabled = false;
+
+        // Restore the original transform properties
+        rootTransform.position = originalPosition;
+        rootTransform.rotation = originalRotation;
+        rootTransform.localScale = originalScale;
     }
 
 
     #endregion
 
     #region button callbacks
+
+    private void OnGoButtonClicked(ModelData modelData)
+    {
+        CreateModelDataForEachSubModel(modelData.Transform, modelData);
+        m_parentModelData = modelData;
+    }
 
     private void OnBackButtonClicked()
     {
@@ -396,10 +473,14 @@ public class SetupMetadataState : IImportWindowState
 
         // save prefab
         // Add your component
-        MetadataComponent inspector = m_modelRef.GameObject.AddComponent<MetadataComponent>();
-        AddSubmodelHighlighter(m_modelRef.GameObject.transform, m_modelRef.Root);
-        AddColliders(m_modelRef.GameObject.transform, m_modelRef.Root);
-        inspector.ModelRef = m_modelRef;
+        if (m_importType != ImportType.ContinueWithExistingMetaData &&
+            m_importType != ImportType.ContinueWithExistingParadata)
+        {
+            MetadataComponent inspector = m_modelRef.GameObject.AddComponent<MetadataComponent>();
+            AddSubmodelHighlighter(m_modelRef.GameObject.transform, m_modelRef.Root);
+            AddColliders(m_modelRef.GameObject.transform, m_modelRef.Root);
+            inspector.ModelRef = m_modelRef;
+        }
 
         // Save the modified prefab
         string prefabPath = EditorUtilities.CombinePaths(m_importConfig.AssetPath, "prefab_" + m_importConfig.AssetName) + ".prefab";

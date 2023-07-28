@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class SelectModelState : IImportWindowState
 {
+    private GameObject m_selectedSceneGameObject;
     private ModelRef m_existingProfile;
     private ModelRef m_existingProfileParOnly;
 
@@ -36,6 +37,17 @@ public class SelectModelState : IImportWindowState
         EditorGUILayout.LabelField("Open File Browser: ", EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
         if (GUILayout.Button("...", GUILayout.Width(110)))
             OnFilePickerButtonClicked();
+        GUILayout.EndHorizontal();
+
+        //pick a game object in the scene
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField("Select a game object in the scene: ", EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+        m_selectedSceneGameObject = (GameObject)EditorGUILayout.ObjectField("", m_selectedSceneGameObject, typeof(GameObject), true, GUILayout.Width(110));
+        if (m_selectedSceneGameObject != null)
+        {
+            OnSceneGameObjectSelected();
+        }
         GUILayout.EndHorizontal();
 
         //pick an existing profile
@@ -78,6 +90,14 @@ public class SelectModelState : IImportWindowState
         var state = new SetConfigState(path, EditorWindow, Owner);
         ChangeState(state);
     }
+
+
+    private void OnSceneGameObjectSelected()
+    {
+        var state = new SetConfigState(m_selectedSceneGameObject, EditorWindow, Owner);
+        ChangeState(state);
+    }
+
 
     private void OnImportExistingProfile(ModelRef model, bool paradataOnly)
     {

@@ -6,43 +6,15 @@ using UnityEditor;
 using UnityEngine;
 
 
-public class ImportConfig
-{
-    private const string KDefaultAssetName = "DefaultAsset";
-
-    public string TemplateName { get; set; }
-    public string ResourcePath { get; set; }
-    public string AssetPath { get; set; }
-    public string AssetName { get; set; }
-
-    public bool Validated { get; set; }
-    public string ErrorMessage { get; set; }
-
-    public string AlbedoMapPath { get; set; }
-
-    public string NormalMapPath { get; set; }
-    public string MetallicMapPath { get; set; }
-    public string RoughnessMapPath { get; set; }
-    public string HeightMapPath { get; set; }
-    public string OcclusionMapPath { get; set; }
-    public string EmissionMapPath { get; set; }
-    public string DetailMaskPath { get; set; }
-    public string SpecularMapPath { get; set; }
-    public bool ParadataOnly { get; set; }
-
-    public void Reset()
-    {
-        ResourcePath = Application.dataPath;
-        AssetPath = Application.dataPath;
-        AssetName = KDefaultAssetName;
-        Validated = false;
-        ErrorMessage = "";
-        ParadataOnly = false;
-    }
-}
-
 public class SetConfigState : IImportWindowState
 {
+    private enum ImportType
+    {
+        ImportModel,
+        AttachToSceneGameObject
+    }
+
+
     #region constants
 
     private const string k_resourceNotFoundErr = "Resource file does not exist!";
@@ -53,15 +25,29 @@ public class SetConfigState : IImportWindowState
 
     #endregion
 
-    private ImportConfig m_ImportConfig = new ImportConfig();
+    private EditorImportConfig m_ImportConfig = new EditorImportConfig();
     private string[] m_options = {};
     private int m_selectedIndex = 0;
-
+    private ImportType m_importType = ImportType.ImportModel;
+    private GameObject m_sceneGameObject;
+    
     public SetConfigState(string resourcePath, EditorWindow window, StateMachine owner) : base(window, owner, 700, 300, 300)
     {
         m_ImportConfig.Reset();
         m_ImportConfig.ResourcePath = resourcePath;
+
+        m_importType = ImportType.ImportModel;
     }
+
+    public SetConfigState(GameObject sceneObj, EditorWindow window, StateMachine owner) : base(window, owner, 700, 300,
+        300)
+    {
+        m_ImportConfig.Reset();
+        m_sceneGameObject = sceneObj;
+
+        m_importType = ImportType.AttachToSceneGameObject;
+    }
+
 
     public override void Update()
     {
@@ -76,17 +62,20 @@ public class SetConfigState : IImportWindowState
         GUILayout.Space(20);
 
         //resource path
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Model Path: ", EditorStylesHelper.LabelStyle, GUILayout.Width(k_labelWidth));
-        EditorGUILayout.LabelField(m_ImportConfig.ResourcePath, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
-        GUILayout.Space(20);
-        if (GUILayout.Button("...", GUILayout.Width(25)))
+        if (m_importType == ImportType.ImportModel)
         {
-            m_ImportConfig.ResourcePath = EditorUtility.OpenFilePanel("Choose Resource File", ".", "fbx");
-            EditorWindow.Repaint();
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            EditorGUILayout.LabelField("Model Path: ", EditorStylesHelper.LabelStyle, GUILayout.Width(k_labelWidth));
+            EditorGUILayout.LabelField(m_ImportConfig.ResourcePath, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+            GUILayout.Space(20);
+            if (GUILayout.Button("...", GUILayout.Width(25)))
+            {
+                m_ImportConfig.ResourcePath = EditorUtility.OpenFilePanel("Choose Resource File", ".", "fbx");
+                EditorWindow.Repaint();
+            }
+            GUILayout.EndHorizontal();
         }
-        GUILayout.EndHorizontal();
 
         //asset path
         EditorGUILayout.BeginHorizontal();
@@ -108,31 +97,34 @@ public class SetConfigState : IImportWindowState
         m_ImportConfig.AssetName = EditorGUILayout.TextField(m_ImportConfig.AssetName, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace + 48));
         GUILayout.EndHorizontal();
 
-        //albedo map path
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Albedo Map Path: ", EditorStylesHelper.LabelStyle, GUILayout.Width(k_labelWidth));
-        EditorGUILayout.LabelField(m_ImportConfig.AlbedoMapPath, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
-        GUILayout.Space(20);
-        if (GUILayout.Button("...", GUILayout.Width(25)))
+        if (m_importType == ImportType.ImportModel)
         {
-            m_ImportConfig.AlbedoMapPath = EditorUtility.OpenFilePanel("Choose Resource File", ".", "jpg,jpeg,png");
-            EditorWindow.Repaint();
-        }
-        GUILayout.EndHorizontal();
+            //albedo map path
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            EditorGUILayout.LabelField("Albedo Map Path: ", EditorStylesHelper.LabelStyle, GUILayout.Width(k_labelWidth));
+            EditorGUILayout.LabelField(m_ImportConfig.AlbedoMapPath, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+            GUILayout.Space(20);
+            if (GUILayout.Button("...", GUILayout.Width(25)))
+            {
+                m_ImportConfig.AlbedoMapPath = EditorUtility.OpenFilePanel("Choose Resource File", ".", "jpg,jpeg,png");
+                EditorWindow.Repaint();
+            }
+            GUILayout.EndHorizontal();
 
-        //normal map path
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20);
-        EditorGUILayout.LabelField("Normal Map Path: ", EditorStylesHelper.LabelStyle, GUILayout.Width(k_labelWidth));
-        EditorGUILayout.LabelField(m_ImportConfig.NormalMapPath, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
-        GUILayout.Space(20);
-        if (GUILayout.Button("...", GUILayout.Width(25)))
-        {
-            m_ImportConfig.NormalMapPath = EditorUtility.OpenFilePanel("Choose Resource File", ".", "jpg,jpeg,png");
-            EditorWindow.Repaint();
+            //normal map path
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            EditorGUILayout.LabelField("Normal Map Path: ", EditorStylesHelper.LabelStyle, GUILayout.Width(k_labelWidth));
+            EditorGUILayout.LabelField(m_ImportConfig.NormalMapPath, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+            GUILayout.Space(20);
+            if (GUILayout.Button("...", GUILayout.Width(25)))
+            {
+                m_ImportConfig.NormalMapPath = EditorUtility.OpenFilePanel("Choose Resource File", ".", "jpg,jpeg,png");
+                EditorWindow.Repaint();
+            }
+            GUILayout.EndHorizontal();
         }
-        GUILayout.EndHorizontal();
 
 
         //choose a template
@@ -178,7 +170,11 @@ public class SetConfigState : IImportWindowState
             if (GUILayout.Button("Create", EditorStylesHelper.RegularButtonStyle, GUILayout.Height(20), GUILayout.Width(650 + m_extraHorSpace)))
             {
                 m_ImportConfig.TemplateName = m_options[m_selectedIndex];
-                var state = new SetupMetadataState(m_ImportConfig, EditorWindow, Owner);
+                SetupMetadataState state = null;
+                if (m_importType == ImportType.ImportModel)
+                    state = new SetupMetadataState(m_ImportConfig, EditorWindow, Owner);
+                else
+                    state = new SetupMetadataState(m_sceneGameObject, m_ImportConfig, EditorWindow, Owner);
                 ChangeState(state);
             }
             EditorGUILayout.EndHorizontal();
@@ -202,7 +198,7 @@ public class SetConfigState : IImportWindowState
 
     private void Validate()
     {
-        if (!System.IO.File.Exists(m_ImportConfig.ResourcePath))
+        if (m_importType == ImportType.ImportModel && !System.IO.File.Exists(m_ImportConfig.ResourcePath))
             m_ImportConfig.ErrorMessage = k_resourceNotFoundErr;
         else if (!System.IO.Directory.Exists(m_ImportConfig.AssetPath))
             m_ImportConfig.ErrorMessage = k_assetPathNotExistErr;

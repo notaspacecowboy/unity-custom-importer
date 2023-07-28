@@ -54,9 +54,15 @@ public class MetadataComponent : MonoBehaviour
     {
         rootData.Transform = root;
         rootData.Collider = rootData.Transform.GetComponent<BoxCollider>();
-        rootData.Highlighter = rootData.Transform.GetComponent<SubModelHighlighter>();
+
+        var highlighter = rootData.Transform.GetComponent<SubModelHighlighter>();
+        highlighter.ModelData = rootData;
+
         for (int i = 0; i < rootData.SubModels.Count; i++)
+        {
+            rootData.SubModels[i].Parent = rootData;
             FixModelDataReference(rootData.SubModels[i], transform.GetChild(rootData.SubModels[i].Index));
+        }
     }
 
     private void EnableCollider(ModelData model)
@@ -72,30 +78,21 @@ public class MetadataComponent : MonoBehaviour
     private void OnSubModelSelected(SubModelHighlighter highlighter)
     {
         //find model data attached to the selected highlighter
-        if (m_currentRoot == null)
-        {
+        if (m_currentRoot == null) 
             DisableCollider(m_root);
-            m_currentRoot = m_root;
-        }
         else
         {
-            ModelData newRoot = null;
             foreach (var model in m_currentRoot.SubModels)
-            {
                 DisableCollider(model);
-                if (model.Transform == highlighter.transform)
-                    newRoot = model;
-            }
-
-            m_currentRoot = newRoot;
         }
+
+        m_currentRoot = highlighter.ModelData;
 
         foreach (var model in m_currentRoot.SubModels)
-        {
             EnableCollider(model);
-            if(model.Highlighter == null)
-                Debug.LogError("highlighter is null!");
-        }
+        
+
+        MetadataVisualizer.Instance.Show(m_currentRoot);
     }
 
 
