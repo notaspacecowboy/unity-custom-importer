@@ -194,7 +194,7 @@ public class SetConfigState : IImportWindowState
         m_options = new string[templates.Count];
         for (int i = 0; i < templates.Count; i++)
             m_options[i] = templates[i].Name;
-    }
+    } 
 
     private void Validate()
     {

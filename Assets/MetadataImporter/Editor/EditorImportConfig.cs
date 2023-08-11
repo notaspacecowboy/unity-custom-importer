@@ -16,13 +16,6 @@ public class EditorImportConfig
     public string AlbedoMapPath { get; set; }
 
     public string NormalMapPath { get; set; }
-    public string MetallicMapPath { get; set; }
-    public string RoughnessMapPath { get; set; }
-    public string HeightMapPath { get; set; }
-    public string OcclusionMapPath { get; set; }
-    public string EmissionMapPath { get; set; }
-    public string DetailMaskPath { get; set; }
-    public string SpecularMapPath { get; set; }
     public bool ParadataOnly { get; set; }
 
     public void Reset()

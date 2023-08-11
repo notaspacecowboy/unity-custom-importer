@@ -92,7 +92,7 @@ public class MetadataComponent : MonoBehaviour
             EnableCollider(model);
         
 
-        MetadataVisualizer.Instance.Show(m_currentRoot);
+        MetadataVisualizer.Instance.Show(m_currentRoot, m_modelRef);
     }
 
 

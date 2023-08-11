@@ -1,5 +1,7 @@
+using SFB;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,7 +61,7 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
         get => m_videoField;
     }
 
-
+    private ModelRef m_currentModelRef;
     private ModelData m_currentData;
     private int m_currentIndex;
 
@@ -82,9 +84,10 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
         m_components.Clear(); 
     }
 
-    public void Show(ModelData data)
+    public void Show(ModelData data, ModelRef modelRef)
     {
         m_panel.gameObject.SetActive(true); //for now
+        m_currentModelRef = modelRef;
         m_currentIndex = 0;
         m_currentData = data;
         ShowField(data, data.MetadataList[0]);
@@ -101,7 +104,7 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
         m_imageField.gameObject.SetActive(false);
         m_videoField.gameObject.SetActive(false);
 
-        m_fieldName.text = $"{data.Name}\n{field.FieldName}";
+        m_fieldName.text = $"{data.Name}: {field.FieldName}";
         field.ShowField(this);
     }
 
@@ -201,5 +204,24 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
 
         m_panel.gameObject.SetActive(false);
         m_currentData = null;
+    }
+
+
+    public void OnExportButtonClicked()
+    {
+        // get the folder path to export
+        string[] paths = StandaloneFileBrowser.OpenFolderPanel("Select Folder", "", false);
+
+        if (paths.Length == 0)
+        {
+            return;
+        }
+
+        if (m_currentModelRef == null)
+            return;
+
+        string exportPath = paths[0];
+        string json = m_currentModelRef.ToJson().ToString();
+        File.WriteAllText(exportPath + "/metadata_" + m_currentModelRef.name +".json", json);
     }
 }

@@ -6,6 +6,7 @@ using TMPro;using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using UnityEngine.Rendering;
 
 #if UNITY_EDITOR
 using System.IO;
@@ -130,10 +131,16 @@ public class ImageFieldData : FieldData
 
     public override JObject ToJson()
     {
+        string imagePath = "";
+        string[] files = Directory.GetFiles(Application.streamingAssetsPath, FieldValue.name + ".*");
+        if (files.Length > 0)
+            imagePath = files[0]; 
+        
+
         return new JObject
         {
             ["FieldName"] = FieldName,
-            ["FieldValue"] = (FieldValue == null ? "" : FieldValue.name),
+            ["FieldValue"] = imagePath,
             ["IsParaData"] = IsParaData
         };
     }
@@ -169,10 +176,16 @@ public class VideoFieldData : FieldData
 
     public override JObject ToJson()
     {
+        string videoPath = "";
+        string[] files = Directory.GetFiles(Application.streamingAssetsPath, FieldValue.name + ".*");
+        if (files.Length > 0)
+            videoPath = files[0];
+
+
         return new JObject
         {
             ["FieldName"] = FieldName,
-            ["FieldValue"] = (FieldValue == null ? "" : FieldValue.name),
+            ["FieldValue"] = videoPath,
             ["IsParaData"] = IsParaData
         };
     }
@@ -191,15 +204,15 @@ public class ModelData: IJsonObject
     [SerializeField]
     private ModelData m_parent;
 
-    [SerializeField]
-    private List<ModelData> m_subModels;
+    [SerializeReference]
+    private Material m_highlightMaterial;
 
     //actual metadata
     [SerializeReference]
     private List<FieldData> m_metadataList;
 
-    [SerializeReference] 
-    private Material m_highlightMaterial;
+    [SerializeField]
+    private List<ModelData> m_subModels;
 
     public int Index
     {
@@ -259,9 +272,9 @@ public class ModelData: IJsonObject
         {
             ["Name"] = Name,
             ["Index"] = Index,
-            ["SubModels"] = new JArray(SubModels.Select(subModel => subModel.ToJson())),
+            ["HighlightMaterial"] = (HighlightMaterial == null ? "" : HighlightMaterial.name),
             ["MetadataList"] = new JArray(MetadataList.Select(metadata => metadata.ToJson())),
-            ["HighlightMaterial"] = (HighlightMaterial == null ? "" : HighlightMaterial.name)
+            ["SubModels"] = new JArray(SubModels.Select(subModel => subModel.ToJson()))
         };
         return jObject;
     }
@@ -329,7 +342,7 @@ public class ModelRefEditor : Editor
     public void ExportToPath(ModelRef modelRef, string exportPath)
     {
         string json = modelRef.ToJson().ToString();
-        File.WriteAllText(exportPath + "/metadata.json", json);
+        File.WriteAllText(exportPath + "/metadata_" + modelRef.name + ".json", json);
     }
 }
 #endif
