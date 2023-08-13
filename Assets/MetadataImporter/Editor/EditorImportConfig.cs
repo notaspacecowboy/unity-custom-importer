@@ -16,6 +16,9 @@ public class EditorImportConfig
     public string AlbedoMapPath { get; set; }
 
     public string NormalMapPath { get; set; }
+
+    public Shader Shader { get; set; }
+
     public bool ParadataOnly { get; set; }
 
     public void Reset()

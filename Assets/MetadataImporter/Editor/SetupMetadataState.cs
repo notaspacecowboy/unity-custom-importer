@@ -94,6 +94,7 @@ public class SetupMetadataState : IImportWindowState
         m_modelRef.Root.Transform = selectedSceneGameObject.transform;
         m_modelRef.GameObject = selectedSceneGameObject;
         m_modelRef.TemplateName = m_importConfig.TemplateName;
+        m_modelRef.UncertaintyShader = m_importConfig.Shader;
 
         AttachFieldToModel(m_modelRef.Root);
     }
@@ -110,6 +111,7 @@ public class SetupMetadataState : IImportWindowState
         m_importConfig.AssetName = Path.GetFileNameWithoutExtension(path);
         m_importConfig.TemplateName = existingModelRef.TemplateName;
         m_importConfig.ParadataOnly = paradataOnly;
+        m_importConfig.Shader = existingModelRef.UncertaintyShader;
 
         foreach (var template in TemplateImporter.Instance.Template.Templates)
         {
@@ -193,6 +195,16 @@ public class SetupMetadataState : IImportWindowState
             GUILayout.Space(20);
             EditorGUILayout.LabelField("Name: ", EditorStylesHelper.LabelStyle);
             modelData.Name = EditorGUILayout.TextField(modelData.Name, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
+            GUILayout.EndHorizontal();
+        }
+
+        //uncertainty level
+        if(!m_importConfig.ParadataOnly)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Space(20);
+            EditorGUILayout.LabelField("Uncertainty Level: ", EditorStylesHelper.LabelStyle);
+            modelData.UncertaintyLevel = EditorGUILayout.Slider(modelData.UncertaintyLevel, 0, 100, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace));
             GUILayout.EndHorizontal();
         }
 
@@ -303,6 +315,7 @@ public class SetupMetadataState : IImportWindowState
         m_modelRef.Root.Transform = model.transform;
         m_modelRef.GameObject = modelInstance;
         m_modelRef.TemplateName = m_importConfig.TemplateName;
+        m_modelRef.UncertaintyShader = m_importConfig.Shader;
 
         AttachFieldToModel(m_modelRef.Root);
     }

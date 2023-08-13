@@ -11,6 +11,8 @@ public class SubModelHighlighter : MonoBehaviour
 {
     public ModelData ModelData { get; set; }
 
+    public Material UncertaintyLevelMaterial { get; set; }
+
 
     private List<Renderer> m_renderers;
     private bool m_isSelected;
@@ -31,6 +33,7 @@ public class SubModelHighlighter : MonoBehaviour
     void Awake()
     {
         m_renderers = new List<Renderer>();
+        m_originalMaterials = new Dictionary<Renderer, Material[]>();
     }
 
     void Start()
@@ -39,6 +42,9 @@ public class SubModelHighlighter : MonoBehaviour
         m_isSelected = false;
         m_originalLayer = gameObject.layer;
         m_selectLayer = LayerMask.NameToLayer("Select");
+
+        foreach (Renderer renderer in m_renderers)
+            m_originalMaterials[renderer] = renderer.materials;
     }
 
     public void Select(bool isSelected)
@@ -67,12 +73,17 @@ public class SubModelHighlighter : MonoBehaviour
         }
     }
 
-    public void ChangeColor(Color newColor)
-    {
-        foreach (var renderer in m_renderers)
-            renderer.material.color = newColor;
-    }
 
+    public void DisplayUncertaintyLevel()
+    {
+        if (UncertaintyLevelMaterial != null && ModelData.UncertaintyLevel > 0)
+        {
+            foreach (var renderer in m_renderers)
+            {
+                renderer.material = UncertaintyLevelMaterial;
+            }
+        }
+    }
 
     //private void OnMouseEnter()
     //{

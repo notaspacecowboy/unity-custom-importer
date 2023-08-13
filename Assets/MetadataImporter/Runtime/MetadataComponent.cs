@@ -22,6 +22,8 @@ public class MetadataComponent : MonoBehaviour
 
     private ModelData m_root;
     private ModelData m_currentRoot;
+
+    private List<SubModelHighlighter> m_highlighters;
     
     private void Awake()
     {
@@ -34,6 +36,7 @@ public class MetadataComponent : MonoBehaviour
         m_root                = m_modelRef.Root;
         m_currentRoot         = null;
         m_modelRef.GameObject = this.gameObject;
+        m_highlighters = new List<SubModelHighlighter>();
 
         var highlighters = GetComponentsInChildren<SubModelHighlighter>();
         highlighters.ToList().ForEach(x =>
@@ -57,12 +60,20 @@ public class MetadataComponent : MonoBehaviour
 
         var highlighter = rootData.Transform.GetComponent<SubModelHighlighter>();
         highlighter.ModelData = rootData;
+        if(rootData.UncertaintyLevel > 0 && m_modelRef.UncertaintyShader != null)
+        {
+            highlighter.UncertaintyLevelMaterial = new Material(m_modelRef.UncertaintyShader);
+            highlighter.UncertaintyLevelMaterial.SetFloat("_UncertaintyLevel", rootData.UncertaintyLevel);
+        }
+
+        m_highlighters.Add(highlighter);
 
         for (int i = 0; i < rootData.SubModels.Count; i++)
         {
             rootData.SubModels[i].Parent = rootData;
             FixModelDataReference(rootData.SubModels[i], transform.GetChild(rootData.SubModels[i].Index));
         }
+
     }
 
     private void EnableCollider(ModelData model)
@@ -92,7 +103,7 @@ public class MetadataComponent : MonoBehaviour
             EnableCollider(model);
         
 
-        MetadataVisualizer.Instance.Show(m_currentRoot, m_modelRef);
+        MetadataVisualizer.Instance.Show(m_currentRoot, this);
     }
 
 
@@ -103,5 +114,12 @@ public class MetadataComponent : MonoBehaviour
 
         m_currentRoot = null;
         EnableCollider(m_root);
+    }
+
+
+    public void DisplayUncertaintyLevel()
+    {
+        foreach (var highlighter in m_highlighters)
+            highlighter.DisplayUncertaintyLevel();
     }
 }

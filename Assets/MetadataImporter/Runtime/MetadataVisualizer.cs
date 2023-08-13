@@ -61,7 +61,7 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
         get => m_videoField;
     }
 
-    private ModelRef m_currentModelRef;
+    private MetadataComponent m_currentComponent;
     private ModelData m_currentData;
     private int m_currentIndex;
 
@@ -84,10 +84,10 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
         m_components.Clear(); 
     }
 
-    public void Show(ModelData data, ModelRef modelRef)
+    public void Show(ModelData data, MetadataComponent metadataComponent)
     {
         m_panel.gameObject.SetActive(true); //for now
-        m_currentModelRef = modelRef;
+        m_currentComponent = metadataComponent;
         m_currentIndex = 0;
         m_currentData = data;
         ShowField(data, data.MetadataList[0]);
@@ -217,11 +217,19 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
             return;
         }
 
-        if (m_currentModelRef == null)
+        if (m_currentComponent == null)
             return;
 
         string exportPath = paths[0];
-        string json = m_currentModelRef.ToJson().ToString();
-        File.WriteAllText(exportPath + "/metadata_" + m_currentModelRef.name +".json", json);
+        string json = m_currentComponent.ModelRef.ToJson().ToString();
+        File.WriteAllText(exportPath + "/metadata_" + m_currentComponent.ModelRef.name +".json", json);
+    }
+
+    public void ToggleUncertaintyLevelView()
+    {
+        if(m_currentComponent != null)
+        {
+            m_currentComponent.DisplayUncertaintyLevel();
+        }
     }
 }

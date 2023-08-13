@@ -132,10 +132,12 @@ public class ImageFieldData : FieldData
     public override JObject ToJson()
     {
         string imagePath = "";
-        string[] files = Directory.GetFiles(Application.streamingAssetsPath, FieldValue.name + ".*");
-        if (files.Length > 0)
-            imagePath = files[0]; 
-        
+        if(FieldValue != null)
+        {
+            string[] files = Directory.GetFiles(Application.streamingAssetsPath, FieldValue.name + ".*");
+            if (files.Length > 0)
+                imagePath = files[0];
+        }
 
         return new JObject
         {
@@ -177,9 +179,12 @@ public class VideoFieldData : FieldData
     public override JObject ToJson()
     {
         string videoPath = "";
-        string[] files = Directory.GetFiles(Application.streamingAssetsPath, FieldValue.name + ".*");
-        if (files.Length > 0)
-            videoPath = files[0];
+        if(FieldValue != null)
+        {
+            string[] files = Directory.GetFiles(Application.streamingAssetsPath, FieldValue.name + ".*");
+            if (files.Length > 0)
+                videoPath = files[0];
+        }
 
 
         return new JObject
@@ -202,6 +207,9 @@ public class ModelData: IJsonObject
     private int m_index;
 
     [SerializeField]
+    private float m_uncertaintyLevel;
+
+    [SerializeField]
     private ModelData m_parent;
 
     [SerializeReference]
@@ -218,6 +226,12 @@ public class ModelData: IJsonObject
     {
         get => m_index;
         set => m_index = value;
+    }
+
+    public float UncertaintyLevel
+    {
+        get => m_uncertaintyLevel;
+        set => m_uncertaintyLevel = value;
     }
 
     public string Name
@@ -272,6 +286,7 @@ public class ModelData: IJsonObject
         {
             ["Name"] = Name,
             ["Index"] = Index,
+            ["UncertaintyLevel"] = UncertaintyLevel,
             ["HighlightMaterial"] = (HighlightMaterial == null ? "" : HighlightMaterial.name),
             ["MetadataList"] = new JArray(MetadataList.Select(metadata => metadata.ToJson())),
             ["SubModels"] = new JArray(SubModels.Select(subModel => subModel.ToJson()))
@@ -293,6 +308,9 @@ public class ModelRef : ScriptableObject, IJsonObject
     [SerializeField]
     private string m_templateName;
 
+    [SerializeField]
+    private Shader m_uncertaintyShader;
+
     public GameObject GameObject
     {
         get => m_go;
@@ -308,6 +326,12 @@ public class ModelRef : ScriptableObject, IJsonObject
     {
         get => m_templateName;
         set => m_templateName = value;
+    }
+
+    public Shader UncertaintyShader
+    {
+        get => m_uncertaintyShader;
+        set => m_uncertaintyShader = value;
     }
 
     public JObject ToJson()

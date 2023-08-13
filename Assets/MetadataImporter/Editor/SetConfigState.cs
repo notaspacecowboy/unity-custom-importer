@@ -126,6 +126,12 @@ public class SetConfigState : IImportWindowState
             GUILayout.EndHorizontal();
         }
 
+        //choose a shader
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20);
+        EditorGUILayout.LabelField("Choose a new shader to visualize uncertainty level: ", EditorStylesHelper.LabelStyle, GUILayout.Width(m_minHorizontalSpace + m_extraHorSpace + 145));
+        m_ImportConfig.Shader = EditorGUILayout.ObjectField("", m_ImportConfig.Shader, typeof(Shader), false, GUILayout.Width(203)) as Shader;
+        GUILayout.EndHorizontal();
 
         //choose a template
         EditorGUILayout.BeginHorizontal();
