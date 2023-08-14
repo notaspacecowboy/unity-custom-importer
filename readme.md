@@ -3,7 +3,7 @@
 This Unity project simplifies the process of embedding various types of metadata into FBX models and their sub-models within Unity. Currently, the supported metadata types includes string, images and videos. 
 This plugin also comes with runtime scripts that helps user to create games/3D applications. These scripts allow users to view and export the metadata attached to all objects within a scene.
 
-## Features
+## ✨ Features
 * Metadata Attachment: Embed strings, images, and videos into FBX models and their sub-models.
 * Runtime Support: Visualize the attached metadata during runtime.
 * Export Functionality: Easily export the attached metadata into JSON format for further analysis or integration with other systems.
