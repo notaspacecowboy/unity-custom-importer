@@ -1,4 +1,4 @@
-# 🐶 Metadata Importer & Visualizer 
+# Metadata Importer & Visualizer 
 
 This Unity project simplifies the process of embedding various types of metadata into FBX models and their sub-models within Unity. Currently, the supported metadata types includes string, images and videos. 
 This plugin also comes with runtime scripts that helps user to create games/3D applications. These scripts allow users to view and export the metadata attached to all objects within a scene.
