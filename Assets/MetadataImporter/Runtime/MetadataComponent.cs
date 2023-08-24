@@ -49,14 +49,14 @@ public class MetadataComponent : MonoBehaviour
     private void Start()
     {
         FixModelDataReference(ModelRef.Root, this.transform);
-        EnableCollider(m_root);
+        EnableHighlighter(m_root);
     }
 
 
     private void FixModelDataReference(ModelData rootData, Transform root)
     {
         rootData.Transform = root;
-        rootData.Collider = rootData.Transform.GetComponent<BoxCollider>();
+        rootData.Highlighter = rootData.Transform.GetComponent<SubModelHighlighter>();
 
         var highlighter = rootData.Transform.GetComponent<SubModelHighlighter>();
         highlighter.ModelData = rootData;
@@ -76,31 +76,31 @@ public class MetadataComponent : MonoBehaviour
 
     }
 
-    private void EnableCollider(ModelData model)
+    private void EnableHighlighter(ModelData model)
     {
-        model.Collider.enabled = true;
+        model.Highlighter.enabled = true;
     }
 
-    private void DisableCollider(ModelData model)
+    private void DisableHighlighter(ModelData model)
     {
-        model.Collider.enabled = false;
+        model.Highlighter.enabled = false;
     }
 
     private void OnSubModelSelected(SubModelHighlighter highlighter)
     {
         //find model data attached to the selected highlighter
-        if (m_currentRoot == null) 
-            DisableCollider(m_root);
+        if (m_currentRoot == null)
+            DisableHighlighter(m_root);
         else
         {
             foreach (var model in m_currentRoot.SubModels)
-                DisableCollider(model);
+                DisableHighlighter(model);
         }
 
         m_currentRoot = highlighter.ModelData;
 
         foreach (var model in m_currentRoot.SubModels)
-            EnableCollider(model);
+            EnableHighlighter(model);
         
 
         MetadataVisualizer.Instance.Show(m_currentRoot, this);
@@ -110,10 +110,10 @@ public class MetadataComponent : MonoBehaviour
     private void OnSubModelUnselected(SubModelHighlighter highlighter)
     {
         foreach (var model in m_currentRoot.SubModels)
-            DisableCollider(model);
+            DisableHighlighter(model);
 
         m_currentRoot = null;
-        EnableCollider(m_root);
+        EnableHighlighter(m_root);
     }
 
 

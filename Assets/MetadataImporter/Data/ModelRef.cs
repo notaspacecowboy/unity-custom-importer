@@ -270,7 +270,7 @@ public class ModelData: IJsonObject
 
     public Transform Transform { get; set; }
 
-    public BoxCollider Collider { get; set; }
+    public SubModelHighlighter Highlighter { get; set; }
 
 
     public ModelData()

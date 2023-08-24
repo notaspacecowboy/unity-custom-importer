@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using Object = System.Object;
 
 public class SetupMetadataState : IImportWindowState
 {
@@ -393,53 +394,25 @@ public class SetupMetadataState : IImportWindowState
 
     private void AddSubmodelHighlighter(Transform rootTransform, ModelData rootModel)
     {
-        rootTransform.AddComponent<SubModelHighlighter>();
+        var highlighter = rootTransform.AddComponent<SubModelHighlighter>();
+        highlighter.enabled = false;
         foreach (var model in rootModel.SubModels)
             AddSubmodelHighlighter(rootTransform.GetChild(model.Index), model);
     }
 
-    private void AddColliders(Transform rootTransform, ModelData rootModel)
+
+    private void AddMeshColliders(Transform rootTransform, ModelData rootModel)
     {
-        foreach (var model in rootModel.SubModels)
-            AddColliders(rootTransform.GetChild(model.Index), model);
-
-        // Store the original transform properties
-        Vector3 originalPosition = rootTransform.position;
-        Quaternion originalRotation = rootTransform.rotation;
-        Vector3 originalScale = rootTransform.localScale;
-
-        // Temporarily negate position, rotation, and scale
-        rootTransform.position = Vector3.zero;
-        rootTransform.rotation = Quaternion.identity;
-        rootTransform.localScale = Vector3.one;
-
-        List<Bounds> objectsBounds = rootTransform.GetComponentsInChildren<Renderer>().Select(r => r.bounds).ToList();
-
-        float minX = objectsBounds.Min(bound => bound.min.x);
-        float minY = objectsBounds.Min(bound => bound.min.y);
-        float minZ = objectsBounds.Min(bound => bound.min.z);
-
-        float maxX = objectsBounds.Max(bound => bound.max.x);
-        float maxY = objectsBounds.Max(bound => bound.max.y);
-        float maxZ = objectsBounds.Max(bound => bound.max.z);
-
-        BoxCollider collider = rootTransform.AddComponent<BoxCollider>();
-        collider.center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
-        collider.size = new Vector3(maxX - minX, maxY - minY, maxZ - minZ);
-
-        if (m_importType == ImportType.AttachToSceneGameObject)
+        MeshFilter[] allMeshFilters = rootTransform.GetComponentsInChildren<MeshFilter>();
+        foreach (var meshFilter in allMeshFilters)
         {
-            collider.center -= rootTransform.position;
-            
+            if (meshFilter.gameObject.GetComponent<Collider>() != null)
+                continue;
+
+            meshFilter.gameObject.AddComponent<MeshCollider>();
         }
-
-        collider.enabled = false;
-
-        // Restore the original transform properties
-        rootTransform.position = originalPosition;
-        rootTransform.rotation = originalRotation;
-        rootTransform.localScale = originalScale;
     }
+
 
 
     #endregion
@@ -491,7 +464,8 @@ public class SetupMetadataState : IImportWindowState
         {
             MetadataComponent inspector = m_modelRef.GameObject.AddComponent<MetadataComponent>();
             AddSubmodelHighlighter(m_modelRef.GameObject.transform, m_modelRef.Root);
-            AddColliders(m_modelRef.GameObject.transform, m_modelRef.Root);
+            AddMeshColliders(m_modelRef.GameObject.transform, m_modelRef.Root);
+
             inspector.ModelRef = m_modelRef;
         }
 

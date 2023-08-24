@@ -157,7 +157,18 @@ public class MetadataVisualizer : MonoSingleton<MetadataVisualizer>, IStringFiel
                 return;
             }
 
-            SubModelHighlighter highlighter = hit.transform.GetComponent<SubModelHighlighter>();
+            SubModelHighlighter highlighter = null;
+            Transform currentTransform = hit.transform;
+            while (currentTransform != null)
+            {
+                highlighter = currentTransform.GetComponent<SubModelHighlighter>();
+                if (highlighter != null && highlighter.isActiveAndEnabled)
+                    break;
+                highlighter = null;
+                currentTransform = currentTransform.parent;
+
+            }
+
             if (highlighter == null)
             {
                 if (m_selected != null)
